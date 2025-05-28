@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default function RootLayout({
 	<link rel="stylesheet" href="/css/main.css"></link>
   </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+         <Toaster position="top-right" />
         {children}
         <script src="js/vendor/jquery-2.2.4.min.js"></script>
  

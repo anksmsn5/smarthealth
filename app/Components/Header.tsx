@@ -26,7 +26,7 @@ export default function Header() {
     setSettings(parsedLocalData);
     setLoading(false); // Immediately show local data
   
-    fetch('https://smarthealthbackend.shreevasudev.in/backend/api/settings')
+    fetch('https://smarthealthbackend.shreevasudev.in/api/settings')
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {

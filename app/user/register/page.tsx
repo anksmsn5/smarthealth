@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Header from "@/app/Components/Header";
 import Footer from "@/app/Components/Footer";
 import Link from "next/link";
+import toast from 'react-hot-toast';
 
 type FormFields = {
   name: string;
@@ -63,7 +64,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://smarthealthbackend.shreevasudev.in/api/register/", {
+      const res = await fetch("/api/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,12 +75,12 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data?.message) setApiError(data.message);
-        else setApiError("Something went wrong.");
+         toast.error(data?.message || "Something went wrong.");
+         
         return;
       }
 
-      setSuccess("Registration successful!");
+      toast.success("Registration successful!");
       setFormData({
         name: "",
         email: "",

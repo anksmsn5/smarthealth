@@ -1,4 +1,4 @@
-// File: /Users/ankursrivastava/Desktop/health/app/layout.tsx
+// File: D:\react\smarthealth\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

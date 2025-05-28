@@ -1,4 +1,4 @@
-// File: /Users/ankursrivastava/Desktop/health/app/user/register/page.tsx
+// File: D:\react\smarthealth\app\user\register\page.tsx
 import * as entry from '../../../../../app/user/register/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
