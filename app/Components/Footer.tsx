@@ -85,9 +85,7 @@ export default function Footer() {
         {/* Footer Bottom */}
         <div className="footer-bottom row align-items-center mt-4">
           <p className="footer-text m-0 col-lg-6 col-md-12">
-            &copy; {new Date().getFullYear()} All rights reserved | This template is made with{' '}
-            <i className="fa fa-heart-o" aria-hidden="true"></i> by{' '}
-            <a href="https://colorlib.com" target="_blank" rel="noopener noreferrer">Colorlib</a>
+            &copy; {new Date().getFullYear()} All rights reserved 
           </p>
           <div className="col-lg-6 col-md-6 social-link">
             <div className="download-button d-flex flex-row justify-content-end">

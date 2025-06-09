@@ -9,6 +9,72 @@
     --foreground: #ededed;
   }
 }
+.section-title {
+  margin-bottom: 40px !important;
+}
+.end-sec ul li {
+  list-style-type: disclosure-closed;
+  text-align: left;
+  color:black;
+}
+.uppercase-text{
+  text-transform: uppercase;
+}
+
+
+.plan-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.plan-left {
+  background-color: #027bff;
+  color: white;
+  flex: 1;
+  padding: 10px 15px;
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.single-price .end-sec{
+  padding: 10px !important;
+}
+
+.plan-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.plan-text {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.plan-right {
+  background-color: #fff;
+  flex-basis: 140px;
+  text-align: left;
+  font-weight: bold;
+  padding-left: 25px;
+  font-size: 0.95rem;
+}
+
+
+.nav-menu a {
+  padding: 0 10px !important;
+  margin: 0 -2px !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+  font-size: 15px !important ;
+  font-family: "Poppins", sans-serif;
+  text-transform: capitalize;
+  outline: none;
+}
 p {
   color: black;
 }

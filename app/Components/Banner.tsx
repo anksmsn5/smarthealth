@@ -8,7 +8,7 @@ export default function Banner() {
 			<div className="row fullscreen d-flex align-items-center justify-content-between">
 				<div className="home-banner-content col-lg-6 col-md-6">
 					<h1>
-						Your Health <br/> & Care 
+						Your Health <br/> and Care 
 					</h1>
 					<p>Made Easy</p>
 					<div className="download-button d-flex flex-row justify-content-start">

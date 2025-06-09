@@ -5,6 +5,7 @@ import About from "./Components/About";
 import Associates from "./Components/Associates";
 import Testimonials from "./Components/Testimonials";
 import Footer from "./Components/Footer";
+import Packages from "./Components/Packages";
 
 export default function Home() {
   return (
@@ -56,6 +57,7 @@ export default function Home() {
 	</section>
   <About/>
   <Associates/>
+  <Packages/>
   <Testimonials/>
   <Footer/>
     </>
