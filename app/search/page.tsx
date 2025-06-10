@@ -134,8 +134,8 @@ export default function Search() {
         <div className="container">
         <div className="row mt-5">
             {results.length === 0 && (
-              <div className="col-12 text-center text-muted">
-                No results found. Try searching!
+              <div className="col-12 text-center text-muted mb-5">
+               Enter Location and Search!
               </div>
             )}
             {results.map((item) => (

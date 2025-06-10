@@ -10,51 +10,42 @@ export default function Footer() {
       <div className="container">
         <div className="row">
           {/* Column 1 */}
-          <div className="col-lg-2 col-md-6 single-footer-widget">
-            <h4>Top Products</h4>
+          <div className="col-lg-3 col-md-6 single-footer-widget">
+            <h4>Important Links</h4>
             <ul>
-              <li><Link href="#">Managed Website</Link></li>
-              <li><Link href="#">Manage Reputation</Link></li>
-              <li><Link href="#">Power Tools</Link></li>
-              <li><Link href="#">Marketing Service</Link></li>
+              <li><Link href="/terms-conditions">Terms and Conditions</Link></li>
+              <li><Link href="/privacy-policy">Privacy Policy</Link></li>
+              <li><Link href="/cancellation-policy">Cancellation Policy</Link></li>
+              <li><Link href="/shipping-policy">Shipping Policy</Link></li>
             </ul>
           </div>
 
           {/* Column 2 */}
-          <div className="col-lg-2 col-md-6 single-footer-widget">
+          <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>Quick Links</h4>
             <ul>
-              <li><Link href="#">Jobs</Link></li>
-              <li><Link href="#">Brand Assets</Link></li>
-              <li><Link href="#">Investor Relations</Link></li>
-              <li><Link href="#">Terms of Service</Link></li>
+              <li><Link href="/aboutus">About Us</Link></li>
+              <li><Link href="/search">Search Providers</Link></li>
+              
             </ul>
           </div>
 
           {/* Column 3 */}
-          <div className="col-lg-2 col-md-6 single-footer-widget">
-            <h4>Features</h4>
+          <div className="col-lg-3 col-md-6 single-footer-widget">
+            <h4>User Login</h4>
             <ul>
-              <li><Link href="#">Jobs</Link></li>
-              <li><Link href="#">Brand Assets</Link></li>
-              <li><Link href="#">Investor Relations</Link></li>
-              <li><Link href="#">Terms of Service</Link></li>
+              <li><Link href="#">User Login</Link></li>
+              <li><Link href="#">Insurer Login</Link></li>
+              <li><Link href="#">Admin Login</Link></li>
+              <li><Link href="#">Doctor Login</Link></li>
             </ul>
           </div>
 
           {/* Column 4 */}
-          <div className="col-lg-2 col-md-6 single-footer-widget">
-            <h4>Resources</h4>
-            <ul>
-              <li><Link href="#">Guides</Link></li>
-              <li><Link href="#">Research</Link></li>
-              <li><Link href="#">Experts</Link></li>
-              <li><Link href="#">Agencies</Link></li>
-            </ul>
-          </div>
+          
 
           {/* Newsletter Column */}
-          <div className="col-lg-4 col-md-6 single-footer-widget">
+          <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>Newsletter</h4>
             <p>You can trust us. We only send promo offers.</p>
             <div className="form-wrap" id="mc_embed_signup">

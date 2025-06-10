@@ -23,6 +23,11 @@ export default function Login() {
 					<div className="row">
                     <div className="col-md-7">
 						<LoginComponent redirection={true} logintype="User"/>
+						<div className="col-md-12 form-group">
+          <Link href='/user/register'>
+            Do not have account? Click to Register
+          </Link>
+        </div>
 					</div>
                     <div className="col-md-5 right-part">
 						<a href="/">home</a>

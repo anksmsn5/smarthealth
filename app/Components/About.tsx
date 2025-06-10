@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import iphone from '@/public/img/app2.jpg'; 
-import iphone2 from '@/public/img/app3.jpg'; 
+import iphone from '@/public/img/app2.png'; 
+import iphone2 from '@/public/img/app3.png'; 
 
 import Link from 'next/link';
 

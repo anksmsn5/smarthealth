@@ -27,6 +27,7 @@ export default function UserMenu() {
     localStorage.removeItem("name");
     localStorage.removeItem("id");
     localStorage.removeItem("email");
+      localStorage.removeItem("type");
     setToken(null);
     setIsDropdownOpen(false);
     router.push("/user/login");

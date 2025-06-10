@@ -86,11 +86,7 @@ export default function Login({ redirection, onSuccess, logintype }: LoginProps)
             disabled={loading}
           />
         </div>
-        <div className="col-md-12 form-group">
-          <Link href={logintype === 'User' ? '/user/register' : '/agent/register'}>
-            Do not have account? Click to Register
-          </Link>
-        </div>
+        
       </div>
     </form>
   );

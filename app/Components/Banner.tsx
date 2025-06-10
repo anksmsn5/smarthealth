@@ -37,7 +37,7 @@ export default function Banner() {
 					</div>
 				</div>
 				<div className="banner-img col-lg-4 col-md-6">
-					<img className="img-fluid" src="img/app1.jpg" alt=""/>
+					<img className="img-fluid" src="img/app1.png" alt=""/>
 				</div>
 			</div>
 		</div>

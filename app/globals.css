@@ -21,13 +21,24 @@
   text-transform: uppercase;
 }
 
-
+.banner-area .banner-content {
+    padding: 30px 0 !important;
+}
 .plan-row {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
 }
+ul.listclass li {
+    color: #000;
+    list-style-type: disclosure-closed;
+    margin-left: 30px;
+    line-height: 35px;
+}
 
+section.feature-area2.section-gap-top {
+    padding-top: 50px !important;
+}
 .plan-left {
   background-color: #027bff;
   color: white;

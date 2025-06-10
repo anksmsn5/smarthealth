@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { userOrders } from '@/lib/constants';
+import Header from '@/app/Components/Header';
+import Footer from '@/app/Components/userpanel/Footer';
 
 const PurchaseTable = () => {
   const [data, setData] = useState([]);
@@ -58,6 +60,8 @@ const PurchaseTable = () => {
   ];
 
   return (
+    <>
+    <Header/>
     <div className="min-h-screen flex flex-col bg-light">
       <div className="container flex-grow h-100">
         <div className="row banner-content">
@@ -94,6 +98,8 @@ const PurchaseTable = () => {
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

@@ -34,7 +34,7 @@ export default function Register() {
                 <div className="col-md-7">
                   <div className="row">
                     <div className="col-md-12">
-                      <CustomerForm type={7} />
+                      <CustomerForm type={7} redirection={true}/>
                     </div>
                     <div className="col-md-12 form-group">
                       <Link href="/user/login">
