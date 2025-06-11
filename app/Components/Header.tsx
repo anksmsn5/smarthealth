@@ -143,7 +143,7 @@ export default function Header() {
           <nav id="nav-menu-container" className="d-none d-md-block">
             <ul className="nav-menu">
             <CommonMenu/>
-              <li><Link href="/search">Search Providers</Link></li>
+              <li><Link href="/search">Search Providers{userType}</Link></li>
 
               {userType === '3' && (
                 <AgentMenu />

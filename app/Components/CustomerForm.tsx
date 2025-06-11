@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import toast from "react-hot-toast";
 import { userRegister } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import LoginPreloader from "./LoginPreloader";
+import GoogleMapAutocomplete from "./GoogleMapAutocomplete";
+
 type FormFields = {
   id?: string;
   name: string;
@@ -41,13 +42,24 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     confirm_password: "",
   });
 
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof FormFields, string>>
-  >({});
+  const [locationData, setLocationData] = useState<{
+    latitude: number | null;
+    longitude: number | null;
+    city: string;
+    state: string;
+  }>({
+    latitude: null,
+    longitude: null,
+    city: "",
+    state: "",
+  });
+
+  const [errors, setErrors] = useState<Partial<Record<keyof FormFields, string>>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+
   useEffect(() => {
     if (customerData) {
       setFormData({
@@ -71,6 +83,27 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
       ...prev,
       [name]: "",
     }));
+  };
+
+  const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
+    if (!place.geometry || !place.address_components) return;
+
+    const latitude = place.geometry.location?.lat() ?? null;
+    const longitude = place.geometry.location?.lng() ?? null;
+
+    const cityComponent = place.address_components.find((c) =>
+      c.types.includes("locality")
+    );
+    const stateComponent = place.address_components.find((c) =>
+      c.types.includes("administrative_area_level_1")
+    );
+
+    setLocationData({
+      latitude,
+      longitude,
+      city: cityComponent?.long_name || "",
+      state: stateComponent?.long_name || "",
+    });
   };
 
   const validate = () => {
@@ -109,10 +142,13 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     try {
       const payload: any = {
         ...formData,
-        type: type, // customer type
+        type,
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        city: locationData.city,
+        state: locationData.state,
       };
 
-      // Only include referredby if it exists and is a valid number
       if (referredby && !isNaN(Number(referredby))) {
         payload.referredby = Number(referredby);
       }
@@ -124,40 +160,29 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
+alert(data.status);
+      if (!res.ok || data.status === false) {
         toast.error(data?.message || "Something went wrong.");
         return;
       }
 
       toast.success("Registration successful!");
-      <LoginPreloader/>
+ 
       localStorage.setItem("name", data.data.name);
       localStorage.setItem("id", data.data.id);
       localStorage.setItem("type", data.data.type);
 
       if (redirection) {
         if (data.data.type == 7) {
-          alert(data.data.type);
           router.push("/userpanel/dashboard");
         }
-
         if (data.data.type == 3) {
-          alert(data.data.type);
           router.push("/agent/dashboard");
         }
       } else {
         onSuccess?.();
         location.reload();
       }
-      // setFormData({
-      //   id: '',
-      //   name: '',
-      //   email: '',
-      //   mobile: '',
-      //   password: '',
-      //   confirm_password: '',
-      // });
 
       if (onClose) {
         onClose();
@@ -175,33 +200,107 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
         {!onClose && (
           <div className="col-md-12 form-group">
             <h3>
-              Create {type === 3 ? "Agent" : type === 7 ? "Customer" : "User"}{" "}
-              Account
+              Create {type === 3 ? "Agent" : type === 7 ? "Customer" : "User"} Account
             </h3>
           </div>
         )}
 
-        {(Object.keys(formData) as (keyof FormFields)[]).map((key) => {
-          if (key === "id") return null; // hide the id field
+        {/* Name */}
+        <div className="col-md-12 form-group">
+          <label>Name</label>
+          <input
+            type="text"
+            name="name"
+            className="form-control"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          {errors.name && <small className="text-danger">{errors.name}</small>}
+        </div>
 
-          return (
-            <div className="col-md-12 form-group" key={key}>
-              <label>
-                {key.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-              </label>
-              <input
-                type={key.includes("password") ? "password" : "text"}
-                name={key}
-                className="form-control"
-                value={formData[key]}
-                onChange={handleChange}
-              />
-              {errors[key] && (
-                <small className="text-danger">{errors[key]}</small>
-              )}
-            </div>
-          );
-        })}
+        {/* Email */}
+        <div className="col-md-12 form-group">
+          <label>Email</label>
+          <input
+            type="text"
+            name="email"
+            className="form-control"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          {errors.email && <small className="text-danger">{errors.email}</small>}
+        </div>
+
+        {/* Mobile */}
+        <div className="col-md-12 form-group">
+          <label>Mobile</label>
+          <input
+            type="text"
+            name="mobile"
+            className="form-control"
+            value={formData.mobile}
+            onChange={handleChange}
+          />
+          {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
+        </div>
+
+        {/* Google Autocomplete */}
+        <div className="col-md-12 form-group">
+          <label>Enter Address</label>
+          <GoogleMapAutocomplete onPlaceSelected={handlePlaceSelected} />
+        </div>
+
+        {/* City (readonly) */}
+        <div className="col-md-6 form-group">
+          <label>City</label>
+          <input
+            type="text"
+            name="city"
+            className="form-control"
+            value={locationData.city}
+            readOnly
+          />
+        </div>
+
+        {/* State (readonly) */}
+        <div className="col-md-6 form-group">
+          <label>State</label>
+          <input
+            type="text"
+            name="state"
+            className="form-control"
+            value={locationData.state}
+            readOnly
+          />
+        </div>
+
+        {/* Password */}
+        <div className="col-md-12 form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            className="form-control"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {errors.password && <small className="text-danger">{errors.password}</small>}
+        </div>
+
+        {/* Confirm Password */}
+        <div className="col-md-12 form-group">
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            name="confirm_password"
+            className="form-control"
+            value={formData.confirm_password}
+            onChange={handleChange}
+          />
+          {errors.confirm_password && (
+            <small className="text-danger">{errors.confirm_password}</small>
+          )}
+        </div>
 
         {apiError && (
           <div className="col-md-12 form-group text-danger">{apiError}</div>

@@ -35,7 +35,10 @@ ul.listclass li {
     margin-left: 30px;
     line-height: 35px;
 }
-
+.pac-container {
+  z-index: 9999 !important;
+  position: absolute !important;
+}
 section.feature-area2.section-gap-top {
     padding-top: 50px !important;
 }

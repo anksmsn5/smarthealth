@@ -3,9 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Modal } from 'react-bootstrap';
-import { agentsCustomer,deleteCustomer } from '@/lib/constants';
-import CustomerForm from '@/app/Components/CustomerForm';
+import { agentsCustomer, deleteCustomer } from '@/lib/constants';
+import dynamic from 'next/dynamic'; // Import dynamic for lazy loading
 import Swal from 'sweetalert2';
+import Header from '@/app/Components/Header';
+
+// Dynamically load CustomerForm to ensure client-side rendering only
+const CustomerForm = dynamic(() => import('@/app/Components/CustomerForm'), { ssr: false });
+
 const Customers = () => {
   const [data, setData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -13,9 +18,8 @@ const Customers = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [editCustomer, setEditCustomer] = useState<any | null>(null); // for edit data
+  const [editCustomer, setEditCustomer] = useState<any | null>(null);
 
-  // Get userId from localStorage
   useEffect(() => {
     const storedUserId = localStorage.getItem('id');
     if (storedUserId) {
@@ -26,7 +30,6 @@ const Customers = () => {
     }
   }, []);
 
-  // Fetch customers when userId is set
   useEffect(() => {
     if (userId) {
       fetchCustomerData(userId);
@@ -42,10 +45,7 @@ const Customers = () => {
         body: JSON.stringify({ user_id: id }),
       });
       const result = await res.json();
-      console.log('API response:', result);
-
       const customerList = Array.isArray(result.data) ? result.data : [result.data];
-
       setData(customerList);
       setFilteredData(customerList);
     } catch (err) {
@@ -55,7 +55,6 @@ const Customers = () => {
     }
   };
 
-  // Filter data on search input
   useEffect(() => {
     const filtered = data.filter((item) =>
       item.name?.toLowerCase().includes(search.toLowerCase())
@@ -63,14 +62,11 @@ const Customers = () => {
     setFilteredData(filtered);
   }, [search, data]);
 
-  // Handle Edit button click
   const handleEdit = (customer: any) => {
- 
     setEditCustomer(customer);
     setShowModal(true);
   };
 
-  // Handle Delete button click
   const handleDelete = async (customer_id: number) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -81,7 +77,7 @@ const Customers = () => {
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Yes, delete it!',
     });
-  
+
     if (result.isConfirmed) {
       try {
         const res = await fetch(deleteCustomer, {
@@ -89,16 +85,14 @@ const Customers = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ customer_id: customer_id }),
+          body: JSON.stringify({ customer_id }),
         });
-  
+
         const data = await res.json();
-  
+
         if (data.status) {
           Swal.fire('Deleted!', data.message, 'success');
-          if (userId) {
-            fetchCustomerData(userId);
-          }
+          if (userId) fetchCustomerData(userId);
         } else {
           Swal.fire('Error!', data.message, 'error');
         }
@@ -142,75 +136,85 @@ const Customers = () => {
     },
   ];
 
+  // Avoid hydration mismatch by not rendering until userId is loaded
+  if (!userId && loading) return null;
+
   return (
-    <div className="min-h-screen flex flex-col bg-light">
-      <div className="container flex-grow h-100">
-        <div className="row banner-content">
-          <div className="col-lg-12">
-            <div className="row">
-              <div className="col-md-12">
-                <div className="card p-4 shadow mt-3 mb-3" style={{ width: '100%' }}>
-                  <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="text-xl font-bold m-0">Customers</h4>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        setEditCustomer(null);
-                        setShowModal(true);
-                      }}
-                    >
-                      Add Customer
-                    </button>
+    <>
+      <Header />
+      <div className="min-h-screen flex flex-col bg-light">
+        <div className="container flex-grow h-100">
+          <div className="row banner-content">
+            <div className="col-lg-12">
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="card p-4 shadow mt-3 mb-3" style={{ width: '100%' }}>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                      <h4 className="text-xl font-bold m-0">Customers</h4>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          if (userId) {
+                            setEditCustomer(null);
+                            setShowModal(true);
+                          }
+                        }}
+                      >
+                        Add Customer
+                      </button>
+                    </div>
+                    <DataTable
+                      columns={columns}
+                      data={filteredData}
+                      progressPending={loading}
+                      pagination
+                      responsive
+                      subHeader
+                      subHeaderComponent={
+                        <div className="d-flex w-100">
+                          <input
+                            type="text"
+                            className="form-control me-auto"
+                            style={{ width: '30%' }}
+                            placeholder="Search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                          />
+                        </div>
+                      }
+                    />
                   </div>
-                  <DataTable
-                    columns={columns}
-                    data={filteredData}
-                    progressPending={loading}
-                    pagination
-                    responsive
-                    subHeader
-                    subHeaderComponent={
-                      <div className="d-flex w-100">
-                        <input
-                          type="text"
-                          className="form-control me-auto"
-                          style={{ width: '30%' }}
-                          placeholder="Search"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                        />
-                      </div>
-                    }
-                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Modal for Add/Edit Customer */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{editCustomer ? 'Edit Customer' : 'Add Customer'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <CustomerForm
-            onClose={() => {
-              setShowModal(false);
-              if (userId) fetchCustomerData(userId);
-            }}
-            onSuccess={() => {
-              setShowModal(false);
-              if (userId) fetchCustomerData(userId);
-            }}
-            type={7}
-            referredby={userId || ''}
-            customerData={editCustomer} // pass data for edit, null for add
-          />
-        </Modal.Body>
-      </Modal>
-    </div>
+        {/* Modal for Add/Edit Customer */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>{editCustomer ? 'Edit Customer' : 'Add Customer'}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {userId && (
+              <CustomerForm
+                onClose={() => {
+                  setShowModal(false);
+                  fetchCustomerData(userId);
+                }}
+                onSuccess={() => {
+                  setShowModal(false);
+                  fetchCustomerData(userId);
+                }}
+                type={7}
+                referredby={userId}
+                customerData={editCustomer}
+              />
+            )}
+          </Modal.Body>
+        </Modal>
+      </div>
+    </>
   );
 };
 

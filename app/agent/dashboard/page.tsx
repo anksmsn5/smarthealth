@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { userDashboard } from "@/lib/constants";
+import Header from "@/app/Components/Header";
 
 export default function Dashboard() {
   const [totalOrders, setTotalOrders] = useState<number | null>(null);
@@ -50,6 +51,7 @@ export default function Dashboard() {
   }, []);
 
   return (
+    <><Header/>
     <div className="min-vh-100 d-flex flex-column bg-light py-4">
       <div className="container flex-grow-1">
         <h4 className="mb-4 fw-bold">Dashboard</h4>
@@ -101,5 +103,6 @@ export default function Dashboard() {
         )}
       </div>
     </div>
+    </>
   );
 }

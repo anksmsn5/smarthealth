@@ -15,7 +15,7 @@ export default function Login() {
 
   return (
     <>
- 
+ <Header/>
     <section className="banner-area">
 		<div className="container">
 			<div className="row banner-content">
@@ -23,6 +23,9 @@ export default function Login() {
 					<div className="row">
                     <div className="col-md-7">
 						<LoginComponent redirection={true} logintype="Agent"/>
+						<Link href='/agent/register'>
+            Do not have account? Click to Register
+          </Link>
 					</div>
                     <div className="col-md-5 right-part">
 						<a href="/">home</a>
