@@ -49,10 +49,7 @@ export default function Footer() {
             <h4>Newsletter</h4>
             <p>You can trust us. We only send promo offers.</p>
             <div className="form-wrap" id="mc_embed_signup">
-              <form
-                target="_blank"
-                action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
-                method="get"
+              <form                
                 className="form-inline"
               >
                 <input

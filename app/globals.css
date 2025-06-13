@@ -35,6 +35,20 @@ ul.listclass li {
     margin-left: 30px;
     line-height: 35px;
 }
+.pac-container {
+  z-index: 99999999999 !important;
+  position: absolute !important;
+}
+
+.custom-modal-width .modal-dialog {
+  max-width: 100%; /* You can increase this as needed */
+  width: 90%;
+}
+
+.header-scrolled {
+  background: #fff !important;
+  transition: all 0.5s;
+}
 
 section.feature-area2.section-gap-top {
     padding-top: 50px !important;

@@ -4,14 +4,20 @@ import { useEffect, useState } from 'react';
 import LoginComponent from './Login';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { packagesApi, purchaseApi } from '@/lib/constants';
+import { assignPackage, packagesApi, purchaseApi } from '@/lib/constants';
 import CustomerForm from './CustomerForm';
+
+interface Feature {
+  feature: string;
+  subheading?: string;
+  price: number | string;
+}
 
 interface Package {
   id: number;
   package_name: string;
   amount: number;
-  features: string[];
+  features: Feature[];
 }
 
 function PackageDetailsModal({
@@ -203,7 +209,7 @@ function RegistrationModal({
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
-        <CustomerForm redirection={false} onSuccess={onClose} type={7} />
+        <CustomerForm redirection={false} onSuccess={onClose} type={7} referredby=""/>
         <button onClick={onClose} className="btn btn-secondary mt-3">
           Close
         </button>
@@ -234,7 +240,15 @@ function RegistrationModal({
   );
 }
 
-export default function Packages() {
+export default function Packages({
+  customer_id,
+  agent_id,
+  purchasing_from,
+}: {
+  customer_id?: number;
+  agent_id?: number;
+  purchasing_from?: string;
+}) {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
@@ -265,6 +279,9 @@ export default function Packages() {
         body: JSON.stringify({
           user_id: userId,
           package_id: packageId,
+          customer_id,
+          agent_id,
+          purchasing_from,
         }),
       });
 
@@ -274,7 +291,7 @@ export default function Packages() {
         toast.success('Package Purchased Successfully.');
         router.push('/userpanel/orders');
       } else {
-        toast.error('Some error occurred.');
+        toast.error(result?.message || 'Some error occurred.');
       }
     } catch (error) {
       toast.error('Error connecting to server.');
@@ -305,6 +322,49 @@ export default function Packages() {
     setShowDetailsModal(true);
   };
 
+  const handleAssignClick = async (pkg: Package, agent_id: number, customer_id: number) => {
+ 
+    if (!agent_id || !customer_id) {
+      toast.error('Agent ID or Customer ID missing.');
+      return;
+    }
+  
+    try {
+      const response = await fetch(assignPackage, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          agent_id,
+          customer_id,
+          package_id: pkg.id,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        if(agent_id)
+        {
+          toast.success('Package assigned successfully.');
+          window.location.reload();
+        }
+        else{
+          toast.success('Package Purchased successfully.');
+        }
+       
+        // optionally navigate or refresh
+      } else {
+        toast.error(result.message || 'Failed to assign package.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Server error. Please try again.');
+    }
+  };
+  
+
   const onRegisterClick = () => {
     setShowLoginModal(false);
     setShowRegisterModal(true);
@@ -313,8 +373,10 @@ export default function Packages() {
   if (!hasMounted) return null;
 
   return (
-    <section className="pricing-area">
+    
+    <section className={!agent_id ? 'pricing-area' : ''}>
       <div className="container">
+      {!agent_id ? (
         <div className="row d-flex justify-content-center">
           <div className="col-lg-6">
             <div className="section-title text-center">
@@ -323,6 +385,17 @@ export default function Packages() {
             </div>
           </div>
         </div>
+      ):(
+        <>
+         <div className="row d-flex justify-content-center">
+          <div className="col-lg-6">
+            <div className="section-title text-center">
+              <h2>Our Plans</h2>
+              <p>Select a Package and Assign !</p>
+            </div>
+          </div>
+        </div></>
+      )}
 
         {loading ? (
           <div className="text-center">Loading packages...</div>
@@ -357,12 +430,21 @@ export default function Packages() {
                   </div>
 
                   <div className="text-center mt-auto mb-3">
-                    <button
-                      className="primary-btn price-btn"
-                      onClick={() => handlePurchaseClick(pkg)}
-                    >
-                      Details
-                    </button>
+                  {!agent_id ? (
+  <button
+    className="primary-btn price-btn"
+    onClick={() => handlePurchaseClick(pkg)}
+  >
+    Details
+  </button>
+) : (
+  <button
+    className="primary-btn price-btn"
+    onClick={() => handleAssignClick(pkg,agent_id, customer_id || 0)}
+  >
+    Assign Package
+  </button>
+)}
                   </div>
                 </div>
               </div>
@@ -371,7 +453,6 @@ export default function Packages() {
         )}
       </div>
 
-      {/* Modals */}
       <PackageDetailsModal
         visible={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}

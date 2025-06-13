@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST='{"app/agent/customers/page.tsx -> @/app/Components/CustomerForm":{"id":9981,"files":[]}}';

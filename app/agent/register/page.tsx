@@ -3,10 +3,12 @@
 import React from "react";
 import Footer from "@/app/Components/Footer";
 import CustomerForm from "@/app/Components/CustomerForm";
+import Header from "@/app/Components/Header";
 
 export default function Register() {
   return (
     <>
+    <Header/>
       <section className="banner-area">
         <div className="container">
           <div className="row banner-content">
@@ -14,7 +16,7 @@ export default function Register() {
               <div className="row">
                 {/* 🧾 Form Section */}
                 <div className="col-md-7">
-                  <CustomerForm referredby="" type={3}/> {/* Replace with dynamic value if needed */}
+                  <CustomerForm referredby="" type={3} redirection={true}/> {/* Replace with dynamic value if needed */}
                 </div>
 
                 {/* 📣 Info Section */}
