@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { userDashboard } from "@/lib/constants";
+import { userDashboard, agentDashboard } from "@/lib/constants";
 import Header from "@/app/Components/Header";
 
 export default function Dashboard() {
   const [totalOrders, setTotalOrders] = useState<number | null>(null);
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const [userProfile, setUserProfile] = useState({
     name: "",
     email: "",
@@ -24,7 +25,7 @@ export default function Dashboard() {
 		  return;
 		}
   
-		const response = await fetch(userDashboard, {
+		const response = await fetch(agentDashboard, {
 		  method: "POST",
 		  headers: {
 			"Content-Type": "application/json",
@@ -39,6 +40,7 @@ export default function Dashboard() {
 		const data = await response.json();
   
 		setTotalOrders(data.data.total_orders);
+		setTotalUsers(data.data.total_users);
 		setUserProfile(data.data.profile);
 	  } catch (error) {
 		console.error("Error fetching dashboard data:", error);
@@ -73,7 +75,7 @@ export default function Dashboard() {
                     <div className="col-md-6">
                     <h5 className="card-title">Total Customers</h5>
                   <a className="display-4 text-primary fw-bold" href="#">
-                    {totalOrders}
+                    {totalUsers}
                   </a>
                     </div>
                     </div>

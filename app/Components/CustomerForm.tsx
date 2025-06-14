@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { userRegister } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import LoginPreloader from "./LoginPreloader";
 import GoogleMapAutocomplete from "./GoogleMapAutocomplete";
 
 type FormFields = {
@@ -22,7 +21,14 @@ type CustomerFormProps = {
   onClose?: () => void;
   onSuccess?: () => void;
   redirection?: boolean;
-  customerData?: Partial<FormFields> & { id?: number };
+  customerData?: Partial<FormFields> & {
+    id?: number;
+    address?: string;
+    city?: string;
+    state?: string;
+    latitude?: number;
+    longitude?: number;
+  };
 };
 
 const CustomerForm: React.FC<CustomerFormProps> = ({
@@ -46,11 +52,13 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     latitude: number | null;
     longitude: number | null;
     city: string;
+    address: string;
     state: string;
   }>({
     latitude: null,
     longitude: null,
     city: "",
+    address: "",
     state: "",
   });
 
@@ -63,13 +71,22 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
   useEffect(() => {
     if (customerData) {
       setFormData({
-        id: customerData.id || "",
+        id: customerData.id,
         name: customerData.name || "",
         email: customerData.email || "",
         mobile: customerData.mobile || "",
         password: "",
         confirm_password: "",
       });
+
+      setLocationData((prev) => ({
+        ...prev,
+        latitude: customerData.latitude ?? null,
+        longitude: customerData.longitude ?? null,
+        address: customerData.address ?? "",
+        city: customerData.city ?? "",
+        state: customerData.state ?? "",
+      }));
     }
   }, [customerData]);
 
@@ -88,6 +105,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
   const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
     if (!place.geometry || !place.address_components) return;
 
+    const address = place.formatted_address || "";
     const latitude = place.geometry.location?.lat() ?? null;
     const longitude = place.geometry.location?.lng() ?? null;
 
@@ -101,6 +119,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     setLocationData({
       latitude,
       longitude,
+      address,
       city: cityComponent?.long_name || "",
       state: stateComponent?.long_name || "",
     });
@@ -147,6 +166,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
         longitude: locationData.longitude,
         city: locationData.city,
         state: locationData.state,
+        address: locationData.address,
       };
 
       if (referredby && !isNaN(Number(referredby))) {
@@ -160,23 +180,24 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
       });
 
       const data = await res.json();
-alert(data.status);
+
       if (!res.ok || data.status === false) {
         toast.error(data?.message || "Something went wrong.");
         return;
       }
 
       toast.success("Registration successful!");
- 
-      localStorage.setItem("name", data.data.name);
-      localStorage.setItem("id", data.data.id);
-      localStorage.setItem("type", data.data.type);
+
+      if (referredby === "") {
+        localStorage.setItem("name", data.data.name);
+        localStorage.setItem("id", data.data.id);
+        localStorage.setItem("type", data.data.type);
+      }
 
       if (redirection) {
         if (data.data.type == 7) {
           router.push("/userpanel/dashboard");
-        }
-        if (data.data.type == 3) {
+        } else if (data.data.type == 3) {
           router.push("/agent/dashboard");
         }
       } else {
@@ -184,9 +205,7 @@ alert(data.status);
         location.reload();
       }
 
-      if (onClose) {
-        onClose();
-      }
+      onClose?.();
     } catch (err) {
       setApiError("Network error. Please try again.");
     } finally {
@@ -244,13 +263,16 @@ alert(data.status);
           {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
         </div>
 
-        {/* Google Autocomplete */}
+        {/* Google Autocomplete (only address input) */}
         <div className="col-md-12 form-group">
-          <label>Enter Address</label>
+          <label>Address{referredby}</label>
           <GoogleMapAutocomplete onPlaceSelected={handlePlaceSelected} />
+          {locationData.address && (
+            <small className="form-text text-muted">{locationData.address}</small>
+          )}
         </div>
 
-        {/* City (readonly) */}
+        {/* City */}
         <div className="col-md-6 form-group">
           <label>City</label>
           <input
@@ -262,7 +284,7 @@ alert(data.status);
           />
         </div>
 
-        {/* State (readonly) */}
+        {/* State */}
         <div className="col-md-6 form-group">
           <label>State</label>
           <input

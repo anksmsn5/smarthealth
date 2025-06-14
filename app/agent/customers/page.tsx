@@ -7,6 +7,8 @@ import { agentsCustomer, deleteCustomer } from '@/lib/constants';
 import dynamic from 'next/dynamic'; // Import dynamic for lazy loading
 import Swal from 'sweetalert2';
 import Header from '@/app/Components/Header';
+import { FaBoxOpen, FaPen, FaTrash } from 'react-icons/fa';
+import Packages from '@/app/Components/Packages';
 
 // Dynamically load CustomerForm to ensure client-side rendering only
 const CustomerForm = dynamic(() => import('@/app/Components/CustomerForm'), { ssr: false });
@@ -19,7 +21,8 @@ const Customers = () => {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editCustomer, setEditCustomer] = useState<any | null>(null);
-
+  const [showPackageModal, setShowPackageModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   useEffect(() => {
     const storedUserId = localStorage.getItem('id');
     if (storedUserId) {
@@ -67,6 +70,11 @@ const Customers = () => {
     setShowModal(true);
   };
 
+  const handlePackageAssign = (customer: any) => {
+    setSelectedCustomer(customer);
+    setShowPackageModal(true);
+  };
+
   const handleDelete = async (customer_id: number) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -111,21 +119,38 @@ const Customers = () => {
     { name: 'Customer Name', selector: (row: any) => row.name, sortable: true },
     { name: 'Email', selector: (row: any) => row.email, sortable: true },
     { name: 'Mobile', selector: (row: any) => row.mobile, sortable: true },
+    { name: 'Address', selector: (row: any) => row.address, sortable: true },
+    { name: 'State', selector: (row: any) => row.state, sortable: true },
+    { name: 'City', selector: (row: any) => row.city, sortable: true },
     {
       name: 'Actions',
       cell: (row: any) => (
         <>
+          {row.package_name ? (
+            <span className="badge bg-success text-white me-2 mr-2">{row.package_name}</span>
+          ) : (
+            <button
+              title="Assign Package"
+              className="btn btn-sm btn-primary me-2 mr-1"
+              onClick={() => handlePackageAssign(row)}
+            >
+              <FaBoxOpen />
+            </button>
+          )}
           <button
+            title='Edit Customer'
             className="btn btn-sm btn-warning me-2"
             onClick={() => handleEdit(row)}
           >
-            Edit
+
+            <FaPen />
           </button>
           <button
+            title='Delete Customer'
             className="btn btn-sm btn-danger ml-5"
             onClick={() => handleDelete(row.id)}
           >
-            Delete
+            <FaTrash />
           </button>
         </>
       ),
@@ -142,8 +167,26 @@ const Customers = () => {
   return (
     <>
       <Header />
+      <Modal
+  show={showPackageModal}
+  onHide={() => setShowPackageModal(false)}
+  centered
+  className="custom-modal-width"
+  
+>
+  <Modal.Header closeButton>
+    {selectedCustomer && (
+      <Modal.Title>
+        Assign Package To - <strong>{selectedCustomer.name}</strong>
+      </Modal.Title>
+    )}
+  </Modal.Header>
+  <Modal.Body>
+    {selectedCustomer && <Packages agent_id={userId || undefined} customer_id={selectedCustomer.id}/>}
+  </Modal.Body>
+</Modal>
       <div className="min-h-screen flex flex-col bg-light">
-        <div className="container flex-grow h-100">
+        <div className="container-fluid flex-grow h-100">
           <div className="row banner-content">
             <div className="col-lg-12">
               <div className="row">

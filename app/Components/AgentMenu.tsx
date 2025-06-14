@@ -66,7 +66,7 @@ export default function AgentMenu() {
     <>
      
             <li><Link href="/agent/customers">Customers</Link></li>
-            <li><Link href="/agent/orders">Orders</Link></li>
+           
               <li>
                 <div className="dropdown position-relative">
                   <button
@@ -89,7 +89,7 @@ export default function AgentMenu() {
                     }}
                   >
                    <li><a className="dropdown-item" href="/agent/dashboard">Dashboards</a></li>
-                    <li><a className="dropdown-item" href="/agent/orders">My Orders</a></li>
+                    
                     <li><a className="dropdown-item" href="#">My Profile</a></li>
                     <li><a className="dropdown-item" href="/agent/change-password">Change Password</a></li>
                     <li><a className="dropdown-item" href="#" onClick={handleLogout}>Logout</a></li>

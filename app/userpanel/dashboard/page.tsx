@@ -6,6 +6,7 @@ import Header from "@/app/Components/Header";
 
 export default function Dashboard() {
   const [totalOrders, setTotalOrders] = useState<number | null>(null);
+  const [packageName, setPackageName] = useState<number | null>(null);
   const [userProfile, setUserProfile] = useState({
     name: "",
     email: "",
@@ -39,7 +40,7 @@ export default function Dashboard() {
 		const data = await response.json();
   
 		setTotalOrders(data.data.total_orders);
-		setUserProfile(data.data.profile);
+		setPackageName(data.data.package);
 	  } catch (error) {
 		console.error("Error fetching dashboard data:", error);
 	  } finally {
@@ -55,38 +56,49 @@ export default function Dashboard() {
     <Header/>
     <div className="min-vh-100 d-flex flex-column bg-light py-4">
       <div className="container flex-grow-1">
-        <h4 className="mb-4 fw-bold">Dashboard</h4>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+    <h4 className="fw-bold mb-0">Dashboard</h4>
+   {totalOrders >= 1 ? (
+  <span className="badge bg-primary text-white px-3 py-2">
+    Currently Active Package: {packageName}
+  </span>
+) : (
+  <span className="badge bg-danger text-white px-3 py-2">
+    No Active Package
+  </span>
+)} 
+  </div>
 
         {loading ? (
           <p>Loading...</p>
         ) : (
           <div className="row">
+         
             <div className="col-md-6 mb-4">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h5 className="card-title">Total Orders</h5>
-                  <a className="display-4 text-primary fw-bold" href="/userpanel/orders">
-                    {totalOrders}
-                  </a>
-                </div>
-              </div>
+              <div className="card">
+  <div className="card-header bg-primary text-white">
+   Your Appointments
+  </div>
+  <div className="card-body">
+    <h5 className="card-title">Card Title</h5>
+    <p className="card-text">This is some content inside the card body.</p>
+    <a href="#" className="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+
             </div>
 
             <div className="col-md-6 mb-4">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h5 className="card-title">Your Profile</h5>
-                  <p className="mb-2">
-                    <strong>Name:</strong> {userProfile.name}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Email:</strong> {userProfile.email}
-                  </p>
-                  <p className="mb-0">
-                    <strong>Mobile:</strong> {userProfile.mobile}
-                  </p>
-                </div>
-              </div>
+               <div className="card">
+  <div className="card-header bg-primary text-white">
+   Lab Reports
+  </div>
+  <div className="card-body">
+    <h5 className="card-title">Card Title</h5>
+    <p className="card-text">This is some content inside the card body.</p>
+    <a href="#" className="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
             </div>
           </div>
         )}
