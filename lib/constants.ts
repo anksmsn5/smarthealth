@@ -1,5 +1,10 @@
-export const baseUrl='https://shreevasudev.in/smartApi/';
-export const logoUrl='https://smarthealthbackend.shreevasudev.in/uploads/logos/';
+// export const baseUrl='https://shreevasudev.in/smartApi/';
+// export const logoUrl='https://smarthealthbackend.shreevasudev.in/uploads/logos/';
+
+export const baseUrl='https://api.smart-health.co.in/';
+export const logoUrl='https://backend.smart-health.co.in/uploads/logos/';
+
+
 export const settingsApi=baseUrl+"settings.php"
 export const userRegister=baseUrl+"userregister.php"
 export const userLogin=baseUrl+"userlogin.php"
@@ -13,3 +18,4 @@ export const agentsCustomer=baseUrl+"agentscustomer.php"
 export const deleteCustomer=baseUrl+"deletecustomer.php"
 export const assignPackage=baseUrl+"assignpackage.php"
 export const agentDashboard=baseUrl+"agentdashboard.php"
+export const getNearByDoctors=baseUrl+"get_nearby_doctors.php"

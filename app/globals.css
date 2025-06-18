@@ -40,6 +40,21 @@ ul.listclass li {
   position: absolute !important;
 }
 
+/* Make backdrop darker */
+.custom-backdrop {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Optional: further enlarge modal content if needed */
+.doctor-modal .modal-content {
+  min-height: 60vh;
+}
+
+th, td  {
+  font-size: 13px  !important;
+  font-weight: 600  !important;
+}
+
 .custom-modal-width .modal-dialog {
   max-width: 100%; /* You can increase this as needed */
   width: 90%;
