@@ -56,7 +56,9 @@ const PurchaseTable = () => {
   const columns = [
     { name: 'Package Name', selector: (row: any) => row.package.package_name, sortable: true },
     { name: 'Amount', selector: (row: any) => `₹${row.package.amount}`, sortable: true },
-    { name: 'Purchased At', selector: (row: any) => new Date(row.package.created_at).toLocaleString(), sortable: true },
+     { name: 'Payment ID', selector: (row: any) => row.razorpay_payment_id, sortable: true },
+      { name: 'Order ID', selector: (row: any) => row.razorpay_order_id, sortable: true },
+    { name: 'Purchased At', selector: (row: any) => new Date(row.created_at).toLocaleString(), sortable: true },
   ];
 
   return (

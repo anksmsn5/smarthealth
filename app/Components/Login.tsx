@@ -17,12 +17,14 @@ interface LoginProps {
 export default function Login({ redirection, onSuccess, logintype }: LoginProps) {
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
+  const [newtype, setNewtype] = useState('')
   const router = useRouter()
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); // start loader
     const type = logintype === 'User' ? 7 : 3;
+    
     try {
       const response = await fetch(userLogin, {
         method: 'POST',
@@ -41,13 +43,19 @@ export default function Login({ redirection, onSuccess, logintype }: LoginProps)
         if (redirection) {
           if(data.user.type==7)
           {
-            alert(data.user.type);
-            router.push('/userpanel/dashboard');
+            if(data.user.password_changed=='Yes')
+            {
+              router.push('/userpanel/dashboard');
+            }
+            else{
+              router.push('/userpanel/create-password');
+            }
+            
           }
 
           if(data.user.type==3)
             {
-              alert(data.user.type);
+            
               router.push('/agent/dashboard');
             }
           
@@ -60,7 +68,7 @@ export default function Login({ redirection, onSuccess, logintype }: LoginProps)
         toast.error(data?.message || "Invalid Credentials.");
       }
     } catch (error) {
-      toast.error("Invalid Credentials.");
+      toast.error("Invalid Credentials. Or Account Inactive. Please contact Admnistrator.");
       console.error(error);
     } finally {
       setLoading(false); // stop loader
@@ -69,10 +77,10 @@ export default function Login({ redirection, onSuccess, logintype }: LoginProps)
   return (
     <form onSubmit={handleSubmit}>
       <div className="row">
-        <div className="col-md-12 form-group"><h3>{logintype} Login</h3></div>
+        <div className="col-md-12 form-group"><h3>{logintype === 'Agent' ? 'Partner' : 'User'} Login</h3></div>
         <div className="col-md-12 form-group">
-          <label>Enter Mobile Number</label>
-          <input type="text" name="mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} className="form-control"></input>
+          <label>Enter Username/Email</label>
+          <input type="email" name="mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} className="form-control"></input>
         </div>
         <div className="col-md-12 form-group">
           <label>Enter Password</label>

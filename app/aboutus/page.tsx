@@ -19,8 +19,7 @@ export default function Aboutus() {
 							About Us
 						</h1>
 						<p>
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
-							magna aliqua.
+					Smart Health is your trusted healthcare platform, making it easy to find and book top doctors and diagnostic labs. Our mission is to simplify healthcare access, empowering you to make informed decisions — quickly, securely, and with confidence. With Smart Health, quality care is always within reach.
 						</p>
 					</div>
 					<div className="right-part">

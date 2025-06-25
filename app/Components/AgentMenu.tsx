@@ -75,7 +75,7 @@ export default function AgentMenu() {
                     type="button"
                     onClick={() => setIsDropdownOpen(prev => !prev)}
                   >
-                   {localStorage.getItem('name')} (Agent)<span className="caret"></span>
+                   {localStorage.getItem('name')} (Partner)<span className="caret"></span>
                   </button>
                   <ul
                     id="dropdown-menu"

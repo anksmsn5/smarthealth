@@ -75,8 +75,8 @@ export default function SubMenu() {
       }}
     >
       <li><a className="dropdown-item" href="/user/login">User Login</a></li>
-      <li><a className="dropdown-item" href="https://smarthealthbackend.shreevasudev.in/" target="_blank">Admin Login</a></li>
-      <li><a className="dropdown-item" href="/agent/login">Insurer Login</a></li>
+      
+      <li><a className="dropdown-item" href="/agent/login">Partner Login</a></li>
     </ul>
   </div>
 </li>

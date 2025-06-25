@@ -54,20 +54,9 @@ export default function CommonMenu() {
   return (
     <>
      
-     <li className="menu-has-children">
-                <a href="#">Join Our Network</a>
-                <ul>
-                  <li><a href="#">Elements</a></li>
-                </ul>
-              </li>
+ 
               <li><Link href="/aboutus">About</Link></li>
-              <li className="menu-has-children">
-                <a href="#">Resources</a>
-                <ul>
-                  <li><a href="#">Blog Home</a></li>
-                  <li><a href="#">Blog Single</a></li>
-                </ul>
-              </li>
+            <li><Link href="/contactus">Contact Us</Link></li>
               </>
   );
 }

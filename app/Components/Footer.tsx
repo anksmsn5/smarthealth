@@ -35,10 +35,10 @@ export default function Footer() {
           <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>User Login</h4>
             <ul>
-              <li><Link href="#">User Login</Link></li>
-              <li><Link href="#">Insurer Login</Link></li>
-              <li><Link href="#">Admin Login</Link></li>
-              <li><Link href="#">Doctor Login</Link></li>
+              <li><Link href="/user/login">User Login</Link></li>
+              <li><Link href="/agent/login">Partner Login</Link></li>
+            
+            
             </ul>
           </div>
 
@@ -48,7 +48,7 @@ export default function Footer() {
           {/* Newsletter Column */}
           <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>Newsletter</h4>
-            <p>You can trust us. We only send promo offers.</p>
+            <p className='text-white'>You can trust us. We only send promo offers.</p>
             <div className="form-wrap" id="mc_embed_signup">
               <form                
                 className="form-inline"
@@ -74,9 +74,10 @@ export default function Footer() {
         {/* Footer Bottom */}
         <div className="footer-bottom row align-items-center mt-4">
           <p className="footer-text m-0 col-lg-6 col-md-12">
-            &copy; {new Date().getFullYear()} All rights reserved 
+            &copy; {new Date().getFullYear()} All rights reserved, BNK HEALTH AND WELLNESS
+SERVICES LLP 
           </p>
-          <div className="col-lg-6 col-md-6 social-link">
+          {/* <div className="col-lg-6 col-md-6 social-link">
             <div className="download-button d-flex flex-row justify-content-end">
               <div className="buttons gray d-flex flex-row align-items-center">
                 <i className="fa fa-apple" aria-hidden="true"></i>
@@ -99,7 +100,7 @@ export default function Footer() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

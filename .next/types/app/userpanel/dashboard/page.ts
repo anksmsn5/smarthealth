@@ -1,4 +1,4 @@
-// File: /Users/ankursrivastava/Desktop/health/app/userpanel/dashboard/page.tsx
+// File: D:\react\smarthealth\app\userpanel\dashboard\page.tsx
 import * as entry from '../../../../../app/userpanel/dashboard/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

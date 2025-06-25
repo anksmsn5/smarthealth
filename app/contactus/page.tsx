@@ -113,7 +113,7 @@ export default function ContactUs() {
                   <p><strong>Phone:</strong> {settings.phone}</p>
                   <p><strong>Email:</strong> {settings.email}</p>
                  
-                  <p><strong>Email:</strong> {settings.email}</p>
+               
                   <p><strong>Working Hours:</strong> {settings.working_hours}</p>
                   <h4 className='mt-3'>Support</h4>
                   <p>

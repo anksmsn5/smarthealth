@@ -2,6 +2,7 @@
 import React from 'react';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { FaSpinner } from 'react-icons/fa';
 const Preloader = () => {
   return (
     <div
@@ -13,9 +14,9 @@ const Preloader = () => {
         style={{ fontSize: '3rem', animation: 'pulse 1.5s infinite' }}
       ></i>
       <div className="spinner-border text-primary my-3" role="status">
-        <span className="visually-hidden">Loading...</span>
+         <FaSpinner/>
       </div>
-      <p className="text-secondary">Please wait while we load your medical data...</p>
+     
     </div>
   );
 };

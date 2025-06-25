@@ -16,34 +16,11 @@ export default function Associates() {
 					</div>
 				</div>
 			</div>
-			<div className="row">
-				<div className='col-md-3'>
-					<img src="/associates/1.webp" className='img-fluid'/>
-				</div>
-				<div className='col-md-3'>
-					<img src="/associates/2.webp" className='img-fluid'/>
-				</div>
-				<div className='col-md-3'>
-					<img src="/associates/3.webp" className='img-fluid'/>
-				</div>
-				<div className='col-md-3'>
-					<img src="/associates/4.webp" className='img-fluid'/>
-				</div>
-				<div className='col-md-3'>
-					<img src="/associates/5.webp" className='img-fluid'/>
-				</div>
-				<div className='col-md-3'>
-					<img src="/associates/6.webp" className='img-fluid'/>
-				</div>
-
-				<div className='col-md-3'>
-					<img src="/associates/7.webp" className='img-fluid'/>
-				</div>
-
-				<div className='col-md-3'>
-					<img src="/associates/8.webp" className='img-fluid'/>
-				</div>
-			</div>
+		<div className="row justify-content-center">
+  <div className="col-md-4">
+    <img src="/associates/1.jpeg" className="img-fluid" alt="Logo" />
+  </div>
+</div>
 		</div>
 	</section>
   );

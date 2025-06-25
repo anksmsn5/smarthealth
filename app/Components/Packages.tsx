@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import LoginComponent from './Login';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import { assignPackage, packagesApi, purchaseApi } from '@/lib/constants';
-import CustomerForm from './CustomerForm';
+import { useEffect, useState } from "react";
+import LoginComponent from "./Login";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import {
+  assignPackage,
+  packagesApi,
+  purchaseApi,
+  createOrder,
+  razorPayKey,
+} from "@/lib/constants";
+import CustomerForm from "./CustomerForm";
 
 interface Feature {
   feature: string;
@@ -51,7 +57,7 @@ function PackageDetailsModal({
                 </div>
               </div>
               <div className="plan-right">
-                {typeof item.price === 'number' || !isNaN(Number(item.price))
+                {typeof item.price === "number" || !isNaN(Number(item.price))
                   ? `₹ ${item.price}`
                   : item.price}
               </div>
@@ -59,8 +65,11 @@ function PackageDetailsModal({
           ))}
         </div>
         <div className="button-group mt-4">
-          <button onClick={onPurchase} className="btn btn-success me-2">
-            Purchase Now
+          <span className="text-black">
+            <b> Net Payable: {pkg.amount}+18% GST</b>
+          </span>
+          <button onClick={onPurchase} className="btn btn-primary me-2">
+            Pay Now
           </button>
           <button onClick={onClose} className="btn btn-secondary ml-3">
             Close
@@ -160,9 +169,13 @@ function LoginModal({
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
-        <LoginComponent redirection={false} onSuccess={onClose} logintype="User" />
+        <LoginComponent
+          redirection={false}
+          onSuccess={onClose}
+          logintype="User"
+        />
         <p className="mt-3">
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <button className="btn btn-link" onClick={onRegisterClick}>
             Register
           </button>
@@ -209,7 +222,12 @@ function RegistrationModal({
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
-        <CustomerForm redirection={false} onSuccess={onClose} type={7} referredby=""/>
+        <CustomerForm
+          redirection={false}
+          onSuccess={onClose}
+          type={7}
+          referredby=""
+        />
         <button onClick={onClose} className="btn btn-secondary mt-3">
           Close
         </button>
@@ -259,51 +277,101 @@ export default function Packages({
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const onConfirm = async () => {
-    const userId = localStorage.getItem('id');
+    const userId = localStorage.getItem("id");
     const packageId = selectedPackage?.id;
 
-    if (!userId) {
-      toast.error('User Not Logged In.');
+    if (!userId || !packageId) {
+      toast.error("Login required or invalid package");
       return;
     }
 
-    setLoading(true);
-
+    const amount = selectedPackage.amount;
+    const tax = amount * 0.18; // 18% tax
+    const finalAmount = amount + tax;
     try {
-      const response = await fetch(purchaseApi, {
-        method: 'POST',
+      // Step 1: Call PHP backend to create Razorpay order
+      const orderRes = await fetch(createOrder, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: userId,
-          package_id: packageId,
-          customer_id,
-          agent_id,
-          purchasing_from,
+          amount: finalAmount,
+          customer_id: userId,
         }),
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        toast.success('Package Purchased Successfully.');
-        router.push('/userpanel/orders');
-      } else {
-        toast.error(result?.message || 'Some error occurred.');
+      const order = await orderRes.json();
+      console.log(order);
+      if (!order.order_id) {
+        toast.error("Failed to create Razorpay order");
+        return;
       }
-    } catch (error) {
-      toast.error('Error connecting to server.');
-      console.error(error);
-    } finally {
-      setLoading(false);
+
+      // Step 2: Initialize Razorpay
+      const options = {
+        key: razorPayKey,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Smart Health",
+        description: "Package Purchase",
+        order_id: order.order_id,
+        handler: async function (response: any) {
+          // Step 3: On success, call PHP REST API to confirm payment
+          const confirmRes = await fetch(purchaseApi, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              package_id: packageId,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              customer_id,
+              agent_id,
+              purchasing_from,
+            }),
+          });
+
+          const confirmData = await confirmRes.json();
+
+          if (confirmRes.ok) {
+            toast.success("Package Purchased Successfully!");
+            router.push("/userpanel/orders");
+          } else {
+            toast.error(confirmData.message || "Failed to store payment.");
+          }
+        },
+
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      toast.error("Payment failed. Try again.");
     }
   };
 
   useEffect(() => {
     setHasMounted(true);
-    setLoggedIn(!!localStorage.getItem('id'));
+    setLoggedIn(!!localStorage.getItem("id"));
 
     fetch(packagesApi)
       .then((res) => res.json())
@@ -312,7 +380,7 @@ export default function Packages({
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Failed to fetch packages:', err);
+        console.error("Failed to fetch packages:", err);
         setLoading(false);
       });
   }, []);
@@ -322,18 +390,21 @@ export default function Packages({
     setShowDetailsModal(true);
   };
 
-  const handleAssignClick = async (pkg: Package, agent_id: number, customer_id: number) => {
- 
+  const handleAssignClick = async (
+    pkg: Package,
+    agent_id: number,
+    customer_id: number
+  ) => {
     if (!agent_id || !customer_id) {
-      toast.error('Agent ID or Customer ID missing.');
+      toast.error("Agent ID or Customer ID missing.");
       return;
     }
-  
+
     try {
       const response = await fetch(assignPackage, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           agent_id,
@@ -341,29 +412,26 @@ export default function Packages({
           package_id: pkg.id,
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
-        if(agent_id)
-        {
-          toast.success('Package assigned successfully.');
+        if (agent_id) {
+          toast.success("Package assigned successfully.");
           window.location.reload();
+        } else {
+          toast.success("Package Purchased successfully.");
         }
-        else{
-          toast.success('Package Purchased successfully.');
-        }
-       
+
         // optionally navigate or refresh
       } else {
-        toast.error(result.message || 'Failed to assign package.');
+        toast.error(result.message || "Failed to assign package.");
       }
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Server error. Please try again.');
+      console.error("Error:", error);
+      toast.error("Server error. Please try again.");
     }
   };
-  
 
   const onRegisterClick = () => {
     setShowLoginModal(false);
@@ -373,29 +441,29 @@ export default function Packages({
   if (!hasMounted) return null;
 
   return (
-    
-    <section className={!agent_id ? 'pricing-area' : ''}>
+    <section className={!agent_id ? "pricing-area" : ""}>
       <div className="container">
-      {!agent_id ? (
-        <div className="row d-flex justify-content-center">
-          <div className="col-lg-6">
-            <div className="section-title text-center">
-              <h2>Our Plans</h2>
-              <p>Start your journey with Smart Health. Purchase our Plans.</p>
+        {!agent_id ? (
+          <div className="row d-flex justify-content-center">
+            <div className="col-lg-6">
+              <div className="section-title text-center">
+                <h2>Our Plans</h2>
+                <p>Start your journey with Smart Health. Purchase our Plans.</p>
+              </div>
             </div>
           </div>
-        </div>
-      ):(
-        <>
-         <div className="row d-flex justify-content-center">
-          <div className="col-lg-6">
-            <div className="section-title text-center">
-              <h2>Our Plans</h2>
-              <p>Select a Package and Assign !</p>
+        ) : (
+          <>
+            <div className="row d-flex justify-content-center">
+              <div className="col-lg-6">
+                <div className="section-title text-center">
+                  <h2>Our Plans</h2>
+                  <p>Select a Package and Assign !</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div></>
-      )}
+          </>
+        )}
 
         {loading ? (
           <div className="text-center">Loading packages...</div>
@@ -405,7 +473,9 @@ export default function Packages({
               <div className="col-lg-6 col-md-6 mt-5 d-flex" key={pkg.id}>
                 <div className="single-price w-100 d-flex flex-column p-3">
                   <div className="card-header bg-primary p-4 text-white text-center">
-                    <h4 className="text-white uppercase-text">{pkg.package_name}</h4>
+                    <h4 className="text-white uppercase-text">
+                      {pkg.package_name}
+                    </h4>
                   </div>
 
                   <div className="flex-grow-1 d-flex flex-column justify-content-between">
@@ -419,7 +489,8 @@ export default function Packages({
                             ></div>
                           </div>
                           <div className="plan-right">
-                            {typeof item.price === 'number' || !isNaN(Number(item.price))
+                            {typeof item.price === "number" ||
+                            !isNaN(Number(item.price))
                               ? `₹ ${item.price}`
                               : item.price}
                           </div>
@@ -430,21 +501,23 @@ export default function Packages({
                   </div>
 
                   <div className="text-center mt-auto mb-3">
-                  {!agent_id ? (
-  <button
-    className="primary-btn price-btn"
-    onClick={() => handlePurchaseClick(pkg)}
-  >
-    Details
-  </button>
-) : (
-  <button
-    className="primary-btn price-btn"
-    onClick={() => handleAssignClick(pkg,agent_id, customer_id || 0)}
-  >
-    Assign Package
-  </button>
-)}
+                    {!agent_id ? (
+                      <button
+                        className="primary-btn price-btn"
+                        onClick={() => handlePurchaseClick(pkg)}
+                      >
+                        Details
+                      </button>
+                    ) : (
+                      <button
+                        className="primary-btn price-btn"
+                        onClick={() =>
+                          handleAssignClick(pkg, agent_id, customer_id || 0)
+                        }
+                      >
+                        Assign Package
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

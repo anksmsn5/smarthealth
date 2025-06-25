@@ -6,35 +6,12 @@ export default function Banner() {
     <section className="home-banner-area">
 		<div className="container">
 			<div className="row fullscreen d-flex align-items-center justify-content-between">
-				<div className="home-banner-content col-lg-6 col-md-6">
+				<div className="home-banner-content col-lg-8 col-md-6">
 					<h1>
-						Your Health <br/> and Care 
+						Your Trusted Partner <br/>for Doctor & Lab Appointments
 					</h1>
-					<p>Made Easy</p>
-					<div className="download-button d-flex flex-row justify-content-start">
-						<div className="buttons flex-row d-flex">
-							<i className="fa fa-apple" aria-hidden="true"></i>
-							<div className="desc">
-								<a href="#">
-									<p>
-										<span>Available</span> <br/>
-										on App Store
-									</p>
-								</a>
-							</div>
-						</div>
-						<div className="buttons dark flex-row d-flex">
-							<i className="fa fa-android" aria-hidden="true"></i>
-							<div className="desc">
-								<a href="#">
-									<p>
-										<span>Available</span> <br/>
-										on Play Store
-									</p>
-								</a>
-							</div>
-						</div>
-					</div>
+					<p>Discover, compare, and book top-rated doctors and diagnostic labs with ease — all in one place. At Smart Health, we simplify your healthcare journey so you can focus on your well-being. Whether you need a quick consultation or a specialized test, we make sure that quality care is just a few clicks away.</p>
+					 
 				</div>
 				<div className="banner-img col-lg-4 col-md-6">
 					<img className="img-fluid" src="img/app1.png" alt=""/>

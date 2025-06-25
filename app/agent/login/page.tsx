@@ -23,14 +23,12 @@ export default function Login() {
 					<div className="row">
                     <div className="col-md-7">
 						<LoginComponent redirection={true} logintype="Agent"/>
-						<Link href='/agent/register'>
-            Do not have account? Click to Register
-          </Link>
+						 
 					</div>
                     <div className="col-md-5 right-part">
 						<a href="/">home</a>
 						<span className="fa fa-caret-right"></span>
-						<a href="/agent/login">Agent Login</a>
+						<a href="/agent/login">Partner Login</a>
 					</div>
 					</div>
 					
