@@ -188,11 +188,11 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
 
       toast.success("Registration successful!");
 
-      if (referredby === "") {
+     
         localStorage.setItem("name", data.data.name);
         localStorage.setItem("id", data.data.id);
         localStorage.setItem("type", data.data.type);
-      }
+      
 
       if (redirection) {
         if (data.data.type == 7) {

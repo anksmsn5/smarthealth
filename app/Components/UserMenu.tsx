@@ -24,10 +24,8 @@ export default function UserMenu() {
   const [token, setToken] = useState<string| null>(null)
   const router = useRouter();
   const handleLogout = () => {
-    localStorage.removeItem("name");
-    localStorage.removeItem("id");
-    localStorage.removeItem("email");
-      localStorage.removeItem("type");
+   localStorage.clear();
+
     setToken(null);
     setIsDropdownOpen(false);
     router.push("/user/login");

@@ -1,16 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ Import router
 import { userDashboard } from "@/lib/constants";
 import Header from "@/app/Components/Header";
 import Swal from "sweetalert2";
 import BookAppointmentModal from "@/app/Components/BookAppointmentModal";
 import LabTestsModal from "@/app/Components/LabTestsModal";
+import { FaPills, FaUserMd, FaVials } from "react-icons/fa";
+import DashboardStrip from "@/app/Components/userpanel/DashboardStrip";
 
 export default function Dashboard() {
+  const router = useRouter();
+
   const [totalOrders, setTotalOrders] = useState<number | null>(null);
   const [packageName, setPackageName] = useState<number | null>(null);
-  const [totalAppointments, setTotalAppointments] = useState<number | null>(null);
+  const [totalAppointments, setTotalAppointments] = useState<number | null>(
+    null
+  );
   const [totalTests, setTotalTests] = useState<number | null>(null);
   const [appointments, setAppointments] = useState<any>([]);
   const [labtests, setLabtests] = useState<[]>([]);
@@ -29,7 +36,7 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
       try {
         const user_id = localStorage.getItem("id");
-        setUserId(user_id)
+        setUserId(user_id);
         if (!user_id) {
           console.error("No userId found in localStorage.");
           setLoading(false);
@@ -66,151 +73,216 @@ export default function Dashboard() {
     fetchDashboardData();
   }, []);
 
-
   const handleBookAppointment = () => {
     if ((totalOrders ?? 0) >= 1) {
       setShowAppointmentModal(true);
     } else {
       Swal.fire({
-        icon: 'error',
-        title: 'No Active Package',
-        text: 'You must purchase a package before booking an appointment.',
+        icon: "error",
+        title: "No Active Package",
+        text: "You must purchase a package before booking an appointment.",
       });
     }
   };
 
   const handleBookLabTests = () => {
-    if ((totalOrders ?? 0) >= 1) {
-      setShowLabTestModal(true);
-    } else {
+    const pkg = localStorage.getItem("package_name");
+    if (!pkg || pkg === "null" || pkg === "undefined") {
       Swal.fire({
-        icon: 'error',
-        title: 'No Active Package',
-        text: 'You must purchase a package before booking a Lab test.',
+        icon: "error",
+        title: "No Active Package",
+        text: "You must purchase a package before booking a Lab test.",
       });
+    } else {
+      router.push("/userpanel/order-test");
     }
   };
+
   return (
     <>
       <Header />
       <div className="min-vh-100 d-flex flex-column bg-light py-4">
         <div className="container flex-grow-1">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h4 className="fw-bold mb-0">Dashboard</h4>
-            {totalOrders !== null && totalOrders >= 1 ? (
-              <span className="badge bg-primary text-white px-3 py-2">
-                Currently Active Package: {packageName}
-              </span>
-            ) : (
-              <span className="badge bg-danger text-white px-3 py-2">
-                No Active Package
-              </span>
-            )}
-          </div>
+          <DashboardStrip title={"Dashboard"} />
 
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <div className="row">
-
-              <div className="col-md-6 mb-4">
-                <div className="card">
-                  <div className="card-header bg-primary text-white">
-                    Your Appointments
-                  </div>
-                  <div className="card-body">
-                    <div className="d-flex justify-content-between mb-3">
-                      <button type="button" className="btn btn-primary">View All</button>
-                      <button type="button" className="btn btn-success" onClick={handleBookAppointment}>Book Appointment</button>
-                    </div>
-
-                    <table className="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Date</th>
-                          <th>Doctor</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {appointments.length > 0 ? (
-                          appointments.map((appt: any) => (
-                            <tr key={appt.id}>
-                              <td>{appt.id}</td>
-                              <td>{appt.appointment_date}</td>
-                              <td>{appt.doctor_name}</td>
-                              <td>{appt.status}</td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={4} className="text-center">No appointments found</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-
+            <>
+              <div className="container my-4">
+                <div className="row">
+                  <div className="col-md-12 mb-4">
+                    <b className="text-black">How we can help you today?</b>
                   </div>
                 </div>
 
-              </div>
-
-              <div className="col-md-6 mb-4">
-                <div className="card">
-                  <div className="card-header bg-primary text-white">
-                    Lab Reports
-                  </div>
-                  <div className="card-body">
-                    <div className="d-flex justify-content-between mb-3">
-                      <button type="button" className="btn btn-primary">View All</button>
-                      <button type="button" className="btn btn-success" onClick={handleBookLabTests}>Book Lab Test</button>
+                <div className="row">
+                  {/* ✅ Lab Test card with click handler */}
+                  <div className="col-md-4 mb-4">
+                    <div
+                      className="text-decoration-none text-dark"
+                      style={{ cursor: "pointer" }}
+                      onClick={handleBookLabTests}
+                    >
+                      <div
+                        className="border rounded p-4 text-center shadow-sm h-100"
+                        style={{ backgroundColor: "#e0f7fa" }}
+                      >
+                        <FaVials size={40} className="mb-3 text-black" />
+                        <h5>Lab Tests</h5>
+                      </div>
                     </div>
+                  </div>
 
-                    <table className="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Test Name</th>
-                          <th>Test Date</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {labtests.length > 0 ? (
-                          labtests.map((test: any) => (
-                            <tr key={test.id}>
-                              <td>{test.id}</td>
-                              <td>{test.test_name}</td>
-                              <td>{test.test_date}</td>
-                              <td>{test.status}</td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={4} className="text-center">No lab tests found</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                  {/* Doctor Appointment */}
+                  <div className="col-md-4 mb-4">
+                    <a
+                      href="#"
+                      className="text-decoration-none text-dark"
+                    >
+                      <div
+                        className="border rounded p-4 text-center shadow-sm h-100"
+                        style={{ backgroundColor: "#e8f5e9" }}
+                      >
+                        <FaUserMd size={40} className="mb-3 text-black" />
+                        <h5>Doctor Appointment</h5>
+                      </div>
+                    </a>
+                  </div>
 
+                  {/* Medicines */}
+                  <div className="col-md-4 mb-4">
+                    <a
+                      href="#"
+                      className="text-decoration-none text-dark"
+                    >
+                      <div
+                        className="border rounded p-4 text-center shadow-sm h-100"
+                        style={{ backgroundColor: "#fff9c4" }}
+                      >
+                        <FaPills size={40} className="mb-3 text-black" />
+                        <h5>Medicines</h5>
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>
-            </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-4">
+                  <div className="card">
+                    <div className="card-header bg-primary text-white">
+                      Your Appointments
+                    </div>
+                    <div className="card-body">
+                      <table className="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Doctor</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {appointments.length > 0 ? (
+                            appointments.map((appt: any) => (
+                              <tr key={appt.id}>
+                                <td>{appt.id}</td>
+                                <td>{appt.appointment_date}</td>
+                                <td>{appt.doctor_name}</td>
+                                <td>{appt.status}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={4} className="text-center">
+                                No appointments found
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                      <button type="button" className="btn btn-primary">
+                        View All
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-6 mb-4">
+                  <div className="card">
+                    <div className="card-header bg-primary text-white">
+                      Lab Reports
+                    </div>
+                    <div className="card-body">
+                      <table className="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Patient Name</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {labtests.length > 0 ? (
+                            labtests.map((test: any, index: number) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{test.patient_name}</td>
+                                <td>{test.age}</td>
+                                <td>
+                                  <span
+                                    className={`badge text-white ${
+                                      test.status.toLowerCase() === "booked"
+                                        ? "bg-danger"
+                                        : "bg-success"
+                                    }`}
+                                  >
+                                    {test.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={4} className="text-center">
+                                No lab tests found
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                      <a
+                        href="/userpanel/test-orders"
+                        className="btn btn-primary"
+                      >
+                        View All
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
 
       {showAppointmentModal && (
-        <BookAppointmentModal show={showAppointmentModal} onHide={() => setShowAppointmentModal(false)} user_id={userId ? parseInt(userId) : 0}/>
+        <BookAppointmentModal
+          show={showAppointmentModal}
+          onHide={() => setShowAppointmentModal(false)}
+          user_id={userId ? parseInt(userId) : 0}
+        />
       )}
 
       {showLabTestModal && (
-        <LabTestsModal show={showLabTestModal} onHide={() => setShowLabTestModal(false)} />
+        <LabTestsModal
+          show={showLabTestModal}
+          onHide={() => setShowLabTestModal(false)}
+        />
       )}
-
-
     </>
   );
 }

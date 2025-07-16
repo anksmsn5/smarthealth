@@ -31,10 +31,7 @@ export default function Header() {
   const [userType, setUserType] = useState<string | null>(null)
   const router = useRouter();
   const handleLogout = () => {
-    localStorage.removeItem("name");
-    localStorage.removeItem("id");
-    localStorage.removeItem("email");
-    localStorage.removeItem("type");
+      localStorage.clear();
     setToken(null);
     setIsDropdownOpen(false);
     router.push("/user/login");
@@ -188,8 +185,10 @@ export default function Header() {
           padding: '1rem',
         }}
       >
+         {userType === '7' && (
+          <>
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h5 className="mb-0">Menu</h5>
+          <h5 className="mb-0">  {localStorage.getItem('name')}</h5>
           <button onClick={() => setIsMenuOpen(false)} className="btn btn-link text-danger">
             <FaTimes size={24} />
           </button>
@@ -198,12 +197,14 @@ export default function Header() {
           <li><a href="/" className="d-block py-2">Home</a></li>
           <li><Link href="/aboutus" className="d-block py-2">About</Link></li>
           
-          <li><Link href="/search" className="d-block py-2">Search Providers</Link></li>
-          <li><a href="/user/login" className="d-block py-2">User Login</a></li>
+          <li><Link href="/userpanel/dashboard" className="d-block py-2">Dashboard</Link></li>
+          <li><a href="/userpanel/orders" className="d-block py-2">My Orders</a></li>
           
-          <li><a href="/agent/login" className="d-block py-2">Insurer Login</a></li>
-        </ul>
+          <li><a href="/userpanel/change-password" className="d-block py-2">Change Password</a></li>
+          <li><a href="#" onClick={handleLogout}>Logout</a></li>
+        </ul> </>)}
       </div>
+     
 
       {/* Overlay */}
       {isMenuOpen && (

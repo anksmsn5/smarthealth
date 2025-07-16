@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { changePassword } from '@/lib/constants';
+import Header from '@/app/Components/Header';
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -58,6 +59,7 @@ const ChangePassword = () => {
   };
 
   return (
+    <><Header />
     <div className="min-vh-100 d-flex justify-content-center align-items-center bg-light">
       <div className="container d-flex justify-content-center">
         <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%' }}>
@@ -106,6 +108,7 @@ const ChangePassword = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

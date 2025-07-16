@@ -4,7 +4,7 @@
 export const baseUrl='https://api.smart-health.co.in/';
 export const logoUrl='https://backend.smart-health.co.in/uploads/logos/';
 
-
+export const reportUrl='https://backend.smart-health.co.in/';
 export const settingsApi=baseUrl+"settings.php"
 export const userRegister=baseUrl+"userregister.php"
 export const userLogin=baseUrl+"userlogin.php"
@@ -24,3 +24,8 @@ export const createCustomer=baseUrl+"customer_create.php"
 ///export const razorPayKey='rzp_test_Apm6ptShS4UHCx'
 export const razorPayKey='rzp_live_Zx4tZct6aePybJ'
 export const createPassword=baseUrl+"create_password.php"
+export const testLists=baseUrl+"lab_tests.php"
+export const orderTests=baseUrl+"order_tests.php"
+export const packageDetails=baseUrl+"package_details.php"
+export const TestOrderList=baseUrl+"test_order_list.php"
+export const FamilyMembers=baseUrl+"family_members.php"
