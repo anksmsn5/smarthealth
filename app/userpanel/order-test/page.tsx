@@ -2,6 +2,7 @@
 import Header from "@/app/Components/Header";
 import LabTestList from "@/app/Components/LabTestList";
 import DashboardStrip from "@/app/Components/userpanel/DashboardStrip";
+import Footer from "@/app/Components/userpanel/Footer";
 import { useEffect } from "react";
 
 export default function LabTestsPage() {
@@ -26,6 +27,7 @@ export default function LabTestsPage() {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

@@ -81,6 +81,8 @@ export default function LabTestList() {
   };
 
   useEffect(() => {
+    
+   
     const fetchStateCity = async () => {
       if (pincode.length === 6) {
         try {
@@ -308,7 +310,7 @@ export default function LabTestList() {
       toast.error("Total amount exceeds available lab credits.");
       return;
     }
-
+const package_id=localStorage.getItem('package_id');
     const payload = {
       patient_name: patientName,
       user_id,
@@ -325,6 +327,7 @@ export default function LabTestList() {
       time,
       test_ids: selectedTests.map((test) => test.id),
       total_amount: totalAmount,
+      package_id
     };
 
     try {

@@ -1,16 +1,33 @@
-'use client';
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import Preloader from "./Preloader";
 import { useEffect, useState } from "react";
-import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaBars,
+  FaTimes,
+  FaHome,
+  FaUser,
+  FaHandshakeSlash,
+  FaUserMd,
+  FaInfoCircle,
+  FaDashcube,
+  FaTachometerAlt,
+  FaFirstOrder,
+  FaKey,
+  FaSignOutAlt,
+  FaSearch,
+} from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { settingsApi, logoUrl } from "@/lib/constants";
 import AgentMenu from "./AgentMenu";
 import UserMenu from "./UserMenu";
 import SubMenu from "./SubMenu";
 import CommonMenu from "./CommonMenu";
-
+import DoctorMenu from "./DoctorMenu";
 
 interface AppSettings {
   title: string;
@@ -20,18 +37,18 @@ interface AppSettings {
   logo: string;
 }
 
-const SETTINGS_KEY = 'app_settings';
+const SETTINGS_KEY = "app_settings";
 
 export default function Header() {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [token, setToken] = useState<string | null>(null)
-  const [userType, setUserType] = useState<string | null>(null)
+  const [token, setToken] = useState<string | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
   const router = useRouter();
   const handleLogout = () => {
-      localStorage.clear();
+    localStorage.clear();
     setToken(null);
     setIsDropdownOpen(false);
     router.push("/user/login");
@@ -40,9 +57,11 @@ export default function Header() {
   useEffect(() => {
     const localData = localStorage.getItem(SETTINGS_KEY);
     const token = localStorage.getItem("name");
-    setUserType(localStorage.getItem("type"))
+    setUserType(localStorage.getItem("type"));
     setToken(token);
-    const parsedLocalData: AppSettings | null = localData ? JSON.parse(localData) : null;
+    const parsedLocalData: AppSettings | null = localData
+      ? JSON.parse(localData)
+      : null;
 
     setSettings(parsedLocalData);
     setLoading(false);
@@ -52,14 +71,15 @@ export default function Header() {
       .then((json) => {
         if (json.status && json.data && json.data.length > 0) {
           const newData = json.data[0];
-          const isDifferent = JSON.stringify(parsedLocalData) !== JSON.stringify(newData);
+          const isDifferent =
+            JSON.stringify(parsedLocalData) !== JSON.stringify(newData);
           if (isDifferent) {
             localStorage.setItem(SETTINGS_KEY, JSON.stringify(newData));
             setSettings(newData);
           }
         }
       })
-      .catch((err) => console.error('Error fetching settings:', err));
+      .catch((err) => console.error("Error fetching settings:", err));
   }, []);
 
   // Close dropdown on outside click
@@ -121,7 +141,6 @@ export default function Header() {
   </div>
 </div> */}
 
-
       {/* Main Navigation */}
       <div className="container main-menu">
         <div className="row align-items-center justify-content-between d-flex">
@@ -138,7 +157,10 @@ export default function Header() {
 
           {/* Hamburger Icon */}
           <div className="d-block d-md-none">
-            <button onClick={() => setIsMenuOpen(true)} className="btn btn-outline-secondary">
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="btn btn-outline-secondary"
+            >
               <FaBars size={24} />
             </button>
           </div>
@@ -146,24 +168,24 @@ export default function Header() {
           {/* Desktop Menu */}
           <nav id="nav-menu-container" className="d-none d-md-block">
             <ul className="nav-menu">
-            <CommonMenu/>
-              <li><Link href="/search">Search Providers</Link></li>
-
-              {userType === '3' && (
-                <AgentMenu />
-              )}
-
-              {userType === '7' && (
-                <UserMenu />
-              )}
-
-              {userType !== '3' && userType !== '7' && (
+              {userType != "2" && (
                 <>
-               
-                <SubMenu />
+                  <CommonMenu />
+
+                  <li>
+                    <Link href="/search"><FaSearch/> Search Providers</Link>
+                  </li>
                 </>
               )}
+              {userType === "3" && <AgentMenu />}
 
+              {userType === "7" && <UserMenu />}
+              {userType === "2" && <DoctorMenu />}
+              {userType !== "3" && userType !== "7" && userType !== "2" && (
+                <>
+                  <SubMenu />
+                </>
+              )}
             </ul>
           </nav>
         </div>
@@ -173,38 +195,173 @@ export default function Header() {
       <div
         className="mobile-menu"
         style={{
-          display: isMenuOpen ? 'block' : 'none',
-          position: 'fixed',
+          display: isMenuOpen ? "block" : "none",
+          position: "fixed",
           top: 0,
           left: 0,
-          height: '100%',
-          width: '250px',
-          backgroundColor: '#fff',
+          height: "100%",
+          width: "250px",
+          backgroundColor: "#fff",
           zIndex: 9999,
-          boxShadow: '2px 0 8px rgba(0,0,0,0.2)',
-          padding: '1rem',
+          boxShadow: "2px 0 8px rgba(0,0,0,0.2)",
+          padding: "1rem",
         }}
       >
-         {userType === '7' && (
+         {!userType && (
+ <>
+          <ul className="list-unstyled sidemenu">
+              <li>
+                <a href="/" className="d-block py-2">
+                 <FaHome/> Home
+                </a>
+              </li>
+              <li>
+                <Link href="/user/login" className="d-block py-2">
+               <FaUser/> User Login
+                </Link>
+              </li>
+
+              <li>
+                <Link href="/agent/login" className="d-block py-2">
+                <FaHandshakeSlash/> Partner Login </Link>
+              </li>
+              <li>
+                <a href="/doctor/login" className="d-block py-2">
+                <FaUserMd/> Doctor Login
+                </a>
+              </li>
+ 
+            </ul>
+ </>
+            )}
+        {userType === "7" && (
           <>
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h5 className="mb-0">  {localStorage.getItem('name')}</h5>
-          <button onClick={() => setIsMenuOpen(false)} className="btn btn-link text-danger">
-            <FaTimes size={24} />
-          </button>
-        </div>
-        <ul className="list-unstyled">
-          <li><a href="/" className="d-block py-2">Home</a></li>
-          <li><Link href="/aboutus" className="d-block py-2">About</Link></li>
-          
-          <li><Link href="/userpanel/dashboard" className="d-block py-2">Dashboard</Link></li>
-          <li><a href="/userpanel/orders" className="d-block py-2">My Orders</a></li>
-          
-          <li><a href="/userpanel/change-password" className="d-block py-2">Change Password</a></li>
-          <li><a href="#" onClick={handleLogout}>Logout</a></li>
-        </ul> </>)}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5 className="mb-0"> {localStorage.getItem("name")}</h5>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="btn btn-link text-danger"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+            <ul className="list-unstyled sidemenu">
+              <li>
+                <a href="/" className="d-block py-2">
+                 <FaHome/> Home
+                </a>
+              </li>
+              <li>
+                <Link href="/aboutus" className="d-block py-2">
+                <FaInfoCircle/>  About
+                </Link>
+              </li>
+
+              <li>
+                <Link href="/userpanel/dashboard" className="d-block py-2">
+               <FaTachometerAlt/>  Dashboard
+                </Link>
+              </li>
+              <li>
+                <a href="/userpanel/orders" className="d-block py-2">
+                <FaFirstOrder/>  My Orders
+                </a>
+              </li>
+
+              <li>
+                <a href="/userpanel/change-password" className="d-block py-2">
+                 <FaKey/> Change Password
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={handleLogout}>
+                 <FaSignOutAlt/> Logout
+                </a>
+              </li>
+            </ul>{" "}
+          </>
+        )}
+
+
+
+        {userType === "2" && (
+          <>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5 className="mb-0"> {localStorage.getItem("name")}<br/>(Doctor)</h5>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="btn btn-link text-danger"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+            <ul className="list-unstyled sidemenu">
+              <li>
+                <a href="/" className="d-block py-2">
+                 <FaTachometerAlt/> Dashboard
+                </a>
+              </li>
+               
+              <li>
+                <a href="/doctor/appointments" className="d-block py-2">
+                <FaFirstOrder/>  Appointments
+                </a>
+              </li>
+
+              <li>
+                <a href="/doctor/change-password" className="d-block py-2">
+                 <FaKey/> Change Password
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={handleLogout}>
+                 <FaSignOutAlt/> Logout
+                </a>
+              </li>
+            </ul>{" "}
+          </>
+        )}
+
+
+
+         {userType === "3" && (
+          <>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5 className="mb-0"> {localStorage.getItem("name")}<br/>(Partner)</h5>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="btn btn-link text-danger"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+            <ul className="list-unstyled sidemenu">
+              <li>
+                <a href="/agent/dashboard" className="d-block py-2">
+                 <FaTachometerAlt/> Dashboard
+                </a>
+              </li>
+               
+              <li>
+                <a href="/agent/customers" className="d-block py-2">
+                <FaFirstOrder/>  Customers
+                </a>
+              </li>
+
+              <li>
+                <a href="/agent/change-password" className="d-block py-2">
+                 <FaKey/> Change Password
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={handleLogout}>
+                 <FaSignOutAlt/> Logout
+                </a>
+              </li>
+            </ul>{" "}
+          </>
+        )}
       </div>
-     
 
       {/* Overlay */}
       {isMenuOpen && (

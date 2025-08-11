@@ -75,7 +75,17 @@ export default function AgentMenu() {
                     type="button"
                     onClick={() => setIsDropdownOpen(prev => !prev)}
                   >
-                   {localStorage.getItem('name')} (Partner)<span className="caret"></span>
+                  {(() => {
+  const name = localStorage.getItem('name') || '';
+  const maxLength = 12; // Set the maximum length you want to show
+  const displayName = name.length > maxLength ? `${name.slice(0, maxLength)}...` : name;
+
+  return (
+    <>
+      {displayName} (Partner)<span className="caret"></span>
+    </>
+  );
+})()}
                   </button>
                   <ul
                     id="dropdown-menu"

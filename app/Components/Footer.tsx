@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import iphone from '@/public/img/iphone.png'; // Make sure the path is correct
+import { FaEnvelope, FaExclamationCircle, FaFileSignature, FaHandshakeSlash, FaInfoCircle, FaSearch, FaShieldAlt, FaTruck, FaUser, FaUserMd } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -13,10 +14,10 @@ export default function Footer() {
           <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>Important Links</h4>
             <ul>
-              <li><Link href="/terms-conditions">Terms and Conditions</Link></li>
-              <li><Link href="/privacy-policy">Privacy Policy</Link></li>
-              <li><Link href="/cancellation-policy">Cancellation Policy</Link></li>
-              <li><Link href="/shipping-policy">Shipping Policy</Link></li>
+              <li><Link href="/terms-conditions"><FaFileSignature/> Terms and Conditions</Link></li>
+              <li><Link href="/privacy-policy"><FaShieldAlt/> Privacy Policy</Link></li>
+              <li><Link href="/cancellation-policy"><FaExclamationCircle/> Cancellation Policy</Link></li>
+              <li><Link href="/shipping-policy"><FaTruck/> Shipping Policy</Link></li>
             </ul>
           </div>
 
@@ -24,9 +25,9 @@ export default function Footer() {
           <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>Quick Links</h4>
             <ul>
-              <li><Link href="/aboutus">About Us</Link></li>
-              <li><Link href="/search">Search Providers</Link></li>
-              <li><Link href="/contactus">Contact Us</Link></li>
+              <li><Link href="/aboutus"><FaInfoCircle/> About Us</Link></li>
+              <li><Link href="/search"><FaSearch/> Search Providers</Link></li>
+              <li><Link href="/contactus"><FaEnvelope/> Contact Us</Link></li>
               
             </ul>
           </div>
@@ -35,8 +36,9 @@ export default function Footer() {
           <div className="col-lg-3 col-md-6 single-footer-widget">
             <h4>User Login</h4>
             <ul>
-              <li><Link href="/user/login">User Login</Link></li>
-              <li><Link href="/agent/login">Partner Login</Link></li>
+              <li><Link href="/user/login"><FaUser/> User Login</Link></li>
+              <li><Link href="/agent/login"><FaHandshakeSlash/> Partner Login</Link></li>
+              <li><Link href="/doctor/login"><FaUserMd/> Doctor Login</Link></li>
             
             
             </ul>

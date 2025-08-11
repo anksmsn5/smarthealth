@@ -26,7 +26,15 @@ export default function Login({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); // start loader
-    const type = logintype === "User" ? 7 : 3;
+  let type;
+
+if (logintype === "User") {
+  type = 7;
+} else if (logintype === "Doctor") {
+  type = 2;
+} else {
+  type = 3; // default to Agent or other types
+}
 
     try {
       const response = await fetch(userLogin, {
@@ -36,7 +44,7 @@ export default function Login({
       });
 
       const data = await response.json();
-
+ 
       if (response.ok) {
         localStorage.setItem("name", data.user.name);
         localStorage.setItem("id", data.user.id);
@@ -44,13 +52,15 @@ export default function Login({
         localStorage.setItem("address", data.user.address);
         localStorage.setItem("email", data.user.email);
         localStorage.setItem("mobile", data.user.mobile);
-        localStorage.setItem("package_name", data.user?.package?.package_name);
-
-        localStorage.setItem("package_id", data.user?.package?.id);
+        localStorage.setItem("state", data.user.state);
+        localStorage.setItem("city", data.user.city);
+        localStorage.setItem("pincode", data.user.pincode);
+        localStorage.setItem("package", JSON.stringify(data.user?.package));
+ 
         if (redirection) {
           if (data.user.type == 7) {
             if (data.user.password_changed == "Yes") {
-              router.push("/userpanel/dashboard");
+          router.push("/userpanel/dashboard");
             } else {
               router.push("/userpanel/create-password");
             }
@@ -58,6 +68,9 @@ export default function Login({
 
           if (data.user.type == 3) {
             router.push("/agent/dashboard");
+          }
+           if (data.user.type == 2) {
+            router.push("/doctor/dashboard");
           }
         } else {
           onSuccess?.();
@@ -79,7 +92,13 @@ export default function Login({
     <form onSubmit={handleSubmit}>
       <div className="row">
         <div className="col-md-12 form-group">
-          <h3>{logintype === "Agent" ? "Partner" : "User"} Login</h3>
+         <h3>
+  {logintype === "Doctor"
+    ? "Doctor"
+    : logintype === "Agent"
+    ? "Partner"
+    : "User"} Login
+</h3>
         </div>
         <div className="col-md-12 form-group">
           <label>Enter Username/Email</label>

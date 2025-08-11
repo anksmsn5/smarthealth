@@ -9,6 +9,7 @@ import BookAppointmentModal from "@/app/Components/BookAppointmentModal";
 import LabTestsModal from "@/app/Components/LabTestsModal";
 import { FaPills, FaUserMd, FaVials } from "react-icons/fa";
 import DashboardStrip from "@/app/Components/userpanel/DashboardStrip";
+import Footer from "@/app/Components/userpanel/Footer";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function Dashboard() {
   };
 
   const handleBookLabTests = () => {
-    const pkg = localStorage.getItem("package_name");
+    const pkg = localStorage.getItem("packageName");
     if (!pkg || pkg === "null" || pkg === "undefined") {
       Swal.fire({
         icon: "error",
@@ -137,7 +138,7 @@ export default function Dashboard() {
                   {/* Doctor Appointment */}
                   <div className="col-md-4 mb-4">
                     <a
-                      href="#"
+                      href="/userpanel/doctors"
                       className="text-decoration-none text-dark"
                     >
                       <div
@@ -153,7 +154,7 @@ export default function Dashboard() {
                   {/* Medicines */}
                   <div className="col-md-4 mb-4">
                     <a
-                      href="#"
+                      href="/userpanel/medicine"
                       className="text-decoration-none text-dark"
                     >
                       <div
@@ -189,9 +190,17 @@ export default function Dashboard() {
                             appointments.map((appt: any) => (
                               <tr key={appt.id}>
                                 <td>{appt.id}</td>
-                                <td>{appt.appointment_date}</td>
+                              <td>{new Date(appt.date).toLocaleDateString('en-GB')}</td>
                                 <td>{appt.doctor_name}</td>
-                                <td>{appt.status}</td>
+                                <td><span
+                                    className={`badge text-white ${
+                                      appt.status.toLowerCase() === "booked"
+                                        ? "bg-danger"
+                                        : "bg-success"
+                                    }`}
+                                  >
+                                    {appt.status}
+                                  </span></td>
                               </tr>
                             ))
                           ) : (
@@ -203,9 +212,9 @@ export default function Dashboard() {
                           )}
                         </tbody>
                       </table>
-                      <button type="button" className="btn btn-primary">
+                      <a href="/userpanel/appointments" className="btn btn-primary">
                         View All
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -213,7 +222,7 @@ export default function Dashboard() {
                 <div className="col-md-6 mb-4">
                   <div className="card">
                     <div className="card-header bg-primary text-white">
-                      Lab Reports
+                      Lab Test Orders
                     </div>
                     <div className="card-body">
                       <table className="table table-striped">
@@ -283,6 +292,7 @@ export default function Dashboard() {
           onHide={() => setShowLabTestModal(false)}
         />
       )}
+      <Footer/>
     </>
   );
 }

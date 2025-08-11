@@ -5,6 +5,7 @@ import DataTable from 'react-data-table-component';
 import { reportUrl, TestOrderList } from '@/lib/constants';
 import Header from '@/app/Components/Header';
 import Footer from '@/app/Components/userpanel/Footer';
+import DashboardStrip from '@/app/Components/userpanel/DashboardStrip';
 
 const TesOrderTable = () => {
   const [data, setData] = useState([]);
@@ -133,15 +134,15 @@ const columns = [
   return (
     <>
       <Header />
-      <div className="min-h-screen flex flex-col bg-light">
+      <div className="min-vh-100 d-flex flex-column bg-light py-4">
         <div className="container flex-grow h-100">
-          <div className="row banner-content">
+  <DashboardStrip title={"Lab Test Orders"} />
+          <div className="row banner-content mt-5">
             <div className="col-lg-12">
               <div className="row">
                 <div className="col-md-12">
                   <div className="card p-4 shadow" style={{ width: '100%' }}>
-                    <h4 className="text-xl font-bold mb-4">Lab Test Order History</h4>
-
+                 
                     <DataTable
                       columns={columns}
                       data={filteredData}

@@ -447,7 +447,14 @@ export default function Packages({
           <div className="row d-flex justify-content-center">
             <div className="col-lg-6">
               <div className="section-title text-center">
-                <h2>Our Plans</h2>
+             <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px',justifyContent:'center' }}>
+      Our Plans
+      <img
+        src="/subscribe.gif"
+        alt="Subscribe"
+        style={{ height: '1.5em', verticalAlign: 'middle' }}
+      />
+    </h2>
                 <p>Start your journey with Smart Health. Purchase our Plans.</p>
               </div>
             </div>
@@ -472,7 +479,7 @@ export default function Packages({
             {packages.map((pkg) => (
               <div className="col-lg-6 col-md-6 mt-5 d-flex" key={pkg.id}>
                 <div className="single-price w-100 d-flex flex-column p-3">
-                  <div className="card-header bg-primary p-4 text-white text-center">
+                  <div className="card-header gradient-border-box bg-primary p-4 text-white text-center">
                     <h4 className="text-white uppercase-text">
                       {pkg.package_name}
                     </h4>
@@ -481,20 +488,18 @@ export default function Packages({
                   <div className="flex-grow-1 d-flex flex-column justify-content-between">
                     <div className="features-list">
                       {pkg.features.map((item: any, index) => (
-                        <div className="plan-row mt-3" key={index}>
-                          <div className="plan-left">
-                            <div
-                              className="plan-text"
-                              dangerouslySetInnerHTML={{ __html: item.feature }}
-                            ></div>
-                          </div>
-                          <div className="plan-right">
-                            {typeof item.price === "number" ||
+                        <>
+                        <div className="row"  key={index}>
+                            <div className="col-12">
+                              <div className="container bg-primary text-white  featureheading"  dangerouslySetInnerHTML={{ __html: item.feature }}></div>
+                            </div>
+                            <div className="col-lg-12 featureprice"> {typeof item.price === "number" ||
                             !isNaN(Number(item.price))
                               ? `₹ ${item.price}`
-                              : item.price}
-                          </div>
+                              : item.price}</div>
                         </div>
+                     
+                        </>
                       ))}
                     </div>
                     <h2 className="mt-3 text-center">{pkg.amount}/- INR</h2>
@@ -503,14 +508,14 @@ export default function Packages({
                   <div className="text-center mt-auto mb-3">
                     {!agent_id ? (
                       <button
-                        className="primary-btn price-btn"
+                        className="btn btn-primary  mt-3"
                         onClick={() => handlePurchaseClick(pkg)}
                       >
                         Details
                       </button>
                     ) : (
                       <button
-                        className="primary-btn price-btn"
+                        className="btn btn-primary mt-3"
                         onClick={() =>
                           handleAssignClick(pkg, agent_id, customer_id || 0)
                         }

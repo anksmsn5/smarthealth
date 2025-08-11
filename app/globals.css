@@ -51,7 +51,9 @@ ul.listclass li {
     max-width: 700px;
   }
 }
-
+.banner {
+    background-color: #26afd8;
+}
 @media (min-width: 992px) {
   .responsive-modal {
     max-width: 900px;
@@ -64,6 +66,51 @@ img.logo {
   .responsive-modal {
     max-width: 1100px;
   }
+}
+.sidemenu li a {
+    color: black !important;
+}
+.home-banner-content h2 {
+    font-size: 32px;
+    color:white;
+}
+.gradient-border-box {
+       background: linear-gradient(135deg, #23b1de, #94c54d);
+           border-radius: 184px 1px 184px 0px !important;
+    }
+
+ 
+ 
+ .featureprice {
+    text-align: right;
+ 
+        margin-top: 5px;
+    border-bottom: 2px dashed #eee;
+}
+
+.featureheading {
+   border-radius: 40px 0px 40px 0px;
+    text-align: left;
+    padding: 5px 5px 5px 35px !important;
+    margin-top: 10px;
+    box-shadow: 2px 3px 5px #1b5e7e;
+}
+.medicinetable tr th {
+    color: black;
+    font-size: 14px;
+}
+.home-banner-content p {
+    line-height: 31px;
+    margin-top: 34px;
+    color: white;
+}
+.banner-img img {
+    border-radius: 150px 0px 50px 10px;
+}
+.medicinetable tr td{
+    color: black;
+    font-size: 13px;
+    font-weight: 500 !important;
 }
 .box {
       background-color: #f8f9fa;

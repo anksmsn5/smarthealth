@@ -11,6 +11,7 @@ import { FaBoxOpen, FaClipboard, FaPen, FaTrash } from "react-icons/fa";
 import Packages from "@/app/Components/Packages";
 import CustomerRegistrationForm from "@/app/Components/CustomerRegistrationForm";
 import toast from "react-hot-toast";
+import Existing from "@/app/Components/Existing";
 
 // Dynamically load CustomerForm to ensure client-side rendering only
 const CustomerForm = dynamic(() => import("@/app/Components/CustomerForm"), {
@@ -24,6 +25,7 @@ const Customers = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showExistModal,setShowExistModal]=useState(false);
   const [editCustomer, setEditCustomer] = useState<any | null>(null);
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
@@ -251,7 +253,7 @@ useEffect(() => {
         </button>
       )}
 
-      {/* Delete Customer Button */}
+      {row.purchase_status!='Paid' && (
       <button
         title="Delete Customer"
         className="btn btn-sm btn-danger ml-5"
@@ -259,6 +261,7 @@ useEffect(() => {
       >
         <FaTrash />
       </button>
+ )}
     </>
   ),
   ignoreRowClick: true,
@@ -307,20 +310,36 @@ useEffect(() => {
                     className="card p-4 shadow mt-3 mb-3"
                     style={{ width: "100%" }}
                   >
-                    <div className="d-flex justify-content-between align-items-center mb-4">
-                      <h4 className="text-xl font-bold m-0">Customers</h4>
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                          if (userId) {
-                            setEditCustomer(null);
-                            setShowModal(true);
-                          }
-                        }}
-                      >
-                        Add Customer
-                      </button>
-                    </div>
+                 <div className="d-flex justify-content-between align-items-center mb-4">
+  <h4 className="text-xl font-bold m-0">Customers</h4>
+  
+  <div className="d-flex gap-2 ms-auto">
+    <button
+      className="btn btn-primary"
+      onClick={() => {
+        if (userId) {
+         
+          setShowExistModal(true);
+        }
+      }}
+    >
+    Add Existing Customer&apos;s Order
+    </button>
+    
+    <button
+      className="btn btn-warning ml-1"
+      onClick={() => {
+        if (userId) {
+          setEditCustomer(null);
+          setShowModal(true);
+        }
+      }}
+    >
+      Add New Customer
+    </button>
+  </div>
+</div>
+
                     <DataTable
                       columns={columns}
                       data={filteredData}
@@ -357,7 +376,7 @@ useEffect(() => {
         >
           <Modal.Header closeButton>
             <Modal.Title>
-              {editCustomer ? "Edit Customer" : "Add Customer"}
+              {editCustomer ? "Edit Customer" : "Add New Customer"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -370,6 +389,26 @@ useEffect(() => {
                   fetchCustomerData(userId); // ✅ Refresh list
                 }}
               />
+            )}
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showExistModal}
+          onHide={() => setShowExistModal(false)}
+          centered
+          dialogClassName="responsive-modal"
+        >
+        
+          <Modal.Body>
+            {userId && (
+               <Existing 
+                onClose={() => setShowModal(false)} // Optional, if used inside form too
+                onSuccess={() => {
+                  setShowExistModal(false); // ✅ Close modal
+                  fetchCustomerData(userId); // ✅ Refresh list
+                }}
+                />
             )}
           </Modal.Body>
         </Modal>

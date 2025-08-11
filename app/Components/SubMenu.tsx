@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { useEffect, useState } from "react";
-import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaBars, FaTimes } from "react-icons/fa";
+import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaBars, FaTimes, FaUser, FaHandshakeSlash, FaUserMd } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 
@@ -74,9 +74,10 @@ export default function SubMenu() {
         zIndex: 1000,
       }}
     >
-      <li><a className="dropdown-item" href="/user/login">User Login</a></li>
+      <li><a className="dropdown-item" href="/user/login"><FaUser/> User Login</a></li>
       
-      <li><a className="dropdown-item" href="/agent/login">Partner Login</a></li>
+      <li><a className="dropdown-item" href="/agent/login"><FaHandshakeSlash/> Partner Login</a></li>
+      <li><a className="dropdown-item" href="/doctor/login"><FaUserMd/> Doctor Login</a></li>
     </ul>
   </div>
 </li>

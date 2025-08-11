@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { useEffect, useState } from "react";
-import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaBars, FaTimes } from "react-icons/fa";
+import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaBars, FaTimes, FaInfoCircle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 
@@ -55,8 +55,8 @@ export default function CommonMenu() {
     <>
      
  
-              <li><Link href="/aboutus">About</Link></li>
-            <li><Link href="/contactus">Contact Us</Link></li>
+              <li><Link href="/aboutus"><FaInfoCircle/> About</Link></li>
+            <li><Link href="/contactus"><FaEnvelope/> Contact Us</Link></li>
               </>
   );
 }

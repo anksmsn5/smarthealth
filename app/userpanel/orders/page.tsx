@@ -5,6 +5,7 @@ import DataTable from 'react-data-table-component';
 import { userOrders } from '@/lib/constants';
 import Header from '@/app/Components/Header';
 import Footer from '@/app/Components/userpanel/Footer';
+import DashboardStrip from '@/app/Components/userpanel/DashboardStrip';
 
 const PurchaseTable = () => {
   const [data, setData] = useState([]);
@@ -64,14 +65,15 @@ const PurchaseTable = () => {
   return (
     <>
     <Header/>
-    <div className="min-h-screen flex flex-col bg-light">
+    <div className="min-vh-100 d-flex flex-column bg-light py-4">
       <div className="container flex-grow h-100">
+        <DashboardStrip title={"Purchase History"} />
         <div className="row banner-content">
           <div className="col-lg-12">
             <div className="row">
               <div className="col-md-12">
               <div className="card p-4 shadow" style={{width: '100%' }}>
-                <h4 className="text-xl font-bold mb-4">Purchase History</h4>
+                
 
                 <DataTable
                   columns={columns}
