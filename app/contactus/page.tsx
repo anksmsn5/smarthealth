@@ -57,10 +57,19 @@ export default function ContactUs() {
     <>
       <Header />
       <section className="banner-area">
-        <div className="container">
+        <div className="container-fluid banner">
           <div className="row banner-content">
             <div className="col-lg-12 d-flex align-items-center justify-content-between">
-              <div className="row w-100">
+              <div className="right-part breadcrumbs">
+                <a href="/">home</a>
+                <span className="fa fa-caret-right"></span>
+                <a href={`/contact`}>Contact Us</a>
+              </div>
+            </div>
+          </div>
+          </div>
+            <div className="container mt-5 mb-5">
+          <div className="row w-100">
                 <div className="col-md-6">
                   <h2>Contact Us</h2>
                   <form onSubmit={handleSubmit}>
@@ -102,11 +111,7 @@ export default function ContactUs() {
                 </div>
 
                 <div className="col-md-6 right-part">
-                  <div className="mt-3">
-                    <a href="/">Home</a>
-                    <span className="fa fa-caret-right mx-2"></span>
-                    <a href="/contact">Contact Us</a>
-                  </div>
+               
                   <h3 className='mt-3'>Contact Information</h3>
                  <h4 className='mt-3 mb-3'>{settings.title}</h4>
                   <p><strong>Address:</strong> {settings.address}</p>
@@ -123,8 +128,6 @@ export default function ContactUs() {
 
                 </div>
               </div>
-            </div>
-          </div>
         </div>
       </section>
       <Footer />

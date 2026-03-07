@@ -56,7 +56,7 @@ if (logintype === "User") {
         localStorage.setItem("city", data.user.city);
         localStorage.setItem("pincode", data.user.pincode);
         localStorage.setItem("package", JSON.stringify(data.user?.package));
- 
+  
         if (redirection) {
           if (data.user.type == 7) {
             if (data.user.password_changed == "Yes") {

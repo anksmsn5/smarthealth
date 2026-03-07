@@ -82,20 +82,21 @@ function LoginModal({
 }
   return (
 	<>
-    <section className="screenshot-area section-gap-top">
+    <section className="screenshot-area associatearea">
       <div className="container">
-        <div className="row d-flex justify-content-center">
-          <div className="col-lg-6">
-            <div className="section-title text-center">
-              <h2>Our Associate</h2>
-            </div>
-          </div>
-        </div>
+    
 
         <div className="row justify-content-center">
           <div className="col-md-4 text-center">
-            <img src="/associates/1.jpeg" className="img-fluid" alt="Logo" />
-            <button className="primary-btn price-btn mt-3" onClick={handleBookNow}>
+             <h3 className="associateHeading">Proudly Associated With</h3>
+          </div>
+          <div className="col-md-4 text-center">
+            <img src="/associates/1.jpeg" className="img-fluid associateLogo" alt="Logo" />
+             
+          </div>
+          <div className="col-md-4 text-center">
+ 
+            <button className="primary-btn price-btn mt-3 associatebtn" onClick={handleBookNow}>
               Book Test Now
             </button>
           </div>

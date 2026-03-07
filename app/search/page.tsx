@@ -67,25 +67,23 @@ export default function Search() {
   return (
     <>
       <Header/>
-      <section className="banner-area">
-        <div className="container">
+       <section className="banner-area">
+        <div className="container-fluid banner">
           <div className="row banner-content">
             <div className="col-lg-12 d-flex align-items-center justify-content-between">
-              <div className="left-part">
-                <h1>Search Providers</h1>
-                <p>Feel free to search the service as per your desire. We will provide you the best.</p>
-              </div>
-              <div className="right-part">
+              
+              <div className="right-part breadcrumbs">
                 <a href="/">home</a>
                 <span className="fa fa-caret-right"></span>
-                <a href="/search">Search Providers</a>
+               <a href="/search">Search Providers</a>
               </div>
             </div>
           </div>
         </div>
       </section>
+      
 
-      <section className="">
+      <section className="mt-5">
         <div className="container">
           <div className="row">
             <div className="col-md-10 mx-auto">

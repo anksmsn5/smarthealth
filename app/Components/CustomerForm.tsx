@@ -1,35 +1,46 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { userRegister } from "@/lib/constants";
+import { userRegister, settingsApi, logoUrl } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import GoogleMapAutocomplete from "./GoogleMapAutocomplete";
+import Link from "next/link";
+
+interface AppSettings {
+  title: string;
+  email: string;
+  mobile: string;
+  address: string;
+  logo: string;
+}
 
 type FormFields = {
-  id?: string;
+  id?: string | number;
   name: string;
   email: string;
   mobile: string;
-  password: string;
-  confirm_password: string;
+  pincode: string;
+  address: string;
+  state: string;
+  city: string;
+  latitude: string | number;
+  longitude: string | number;
+  aadhaar_front?: File | null;
+  aadhaar_back?: File | null;
+  pan_card?: File | null;
+  profile_photo?: File | null;
 };
 
 type CustomerFormProps = {
-  referredby?: string | number | undefined;
+  referredby?: string | number;
   type: string | number;
   onClose?: () => void;
   onSuccess?: () => void;
   redirection?: boolean;
-  customerData?: Partial<FormFields> & {
-    id?: number;
-    address?: string;
-    city?: string;
-    state?: string;
-    latitude?: number;
-    longitude?: number;
-  };
+  customerData?: Partial<FormFields>;
 };
+
+const SETTINGS_KEY = "app_settings";
 
 const CustomerForm: React.FC<CustomerFormProps> = ({
   referredby,
@@ -39,116 +50,126 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
   customerData,
   redirection,
 }) => {
+  const router = useRouter();
+
+  const [settings, setSettings] = useState<AppSettings | null>(null);
   const [formData, setFormData] = useState<FormFields>({
     id: "",
     name: "",
     email: "",
     mobile: "",
-    password: "",
-    confirm_password: "",
-  });
-
-  const [locationData, setLocationData] = useState<{
-    latitude: number | null;
-    longitude: number | null;
-    city: string;
-    address: string;
-    state: string;
-  }>({
-    latitude: null,
-    longitude: null,
-    city: "",
+    pincode: "",
     address: "",
     state: "",
+    city: "",
+    latitude: "",
+    longitude: "",
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormFields, string>>>({});
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
-  const router = useRouter();
+  const [success, setSuccess] = useState<string | null>(null);
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
 
+  // OTP State
+  const [otpValues, setOtpValues] = useState(Array(4).fill(""));
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [userId, setUserId] = useState<string | number | null>(null);
+  const [mobile, setMobile] = useState<string | number | null>(null);
+  const [userType, setUserType] = useState<string | number | null>(null);
+
+  /** Load Settings */
+  useEffect(() => {
+    const localData = localStorage.getItem(SETTINGS_KEY);
+    const parsedLocalData: AppSettings | null = localData ? JSON.parse(localData) : null;
+    setSettings(parsedLocalData);
+
+    fetch(settingsApi)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.status && json.data?.length > 0) {
+          const newData = json.data[0];
+          const isDifferent = JSON.stringify(parsedLocalData) !== JSON.stringify(newData);
+
+          if (isDifferent) {
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(newData));
+            setSettings(newData);
+          }
+        }
+      })
+      .catch((err) => console.error("Error fetching settings:", err));
+  }, []);
+
+  /** Populate form in edit mode */
   useEffect(() => {
     if (customerData) {
-      setFormData({
-        id: customerData.id,
-        name: customerData.name || "",
-        email: customerData.email || "",
-        mobile: customerData.mobile || "",
-        password: "",
-        confirm_password: "",
-      });
-
-      setLocationData((prev) => ({
+      setFormData((prev) => ({
         ...prev,
-        latitude: customerData.latitude ?? null,
-        longitude: customerData.longitude ?? null,
-        address: customerData.address ?? "",
-        city: customerData.city ?? "",
-        state: customerData.state ?? "",
+        ...customerData,
       }));
     }
   }, [customerData]);
 
+  useEffect(() => {
+    const savedMobile = localStorage.getItem("register_mobile");
+    if (savedMobile) {
+      setMobile(savedMobile);
+      setFormData((prev) => ({ ...prev, mobile: savedMobile }));
+    }
+  }, []);
+
+  /** Auto-fill city/state from pincode */
+  useEffect(() => {
+  if (formData.pincode.length === 6) {
+    console.log("Fetching for pincode:", formData.pincode);
+    fetch(`https://api.postalpincode.in/pincode/${formData.pincode}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API Response:", data);
+        if (data[0].Status === "Success" && data[0].PostOffice?.length > 0) {
+          const postOffice = data[0].PostOffice[0];
+          setFormData((prev) => ({
+            ...prev,
+            city: postOffice.District || "",
+            state: postOffice.State || "",
+          }));
+        } else {
+          toast.error("Invalid Pincode");
+          setFormData((prev) => ({ ...prev, city: "", state: "" }));
+        }
+      })
+      .catch((err) => {
+        console.error("Pincode fetch error:", err);
+        toast.error("Failed to fetch location from pincode");
+      });
+  }
+}, [formData.pincode]);
+
+
+  /** Handle input change */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "",
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
-    if (!place.geometry || !place.address_components) return;
-
-    const address = place.formatted_address || "";
-    const latitude = place.geometry.location?.lat() ?? null;
-    const longitude = place.geometry.location?.lng() ?? null;
-
-    const cityComponent = place.address_components.find((c) =>
-      c.types.includes("locality")
-    );
-    const stateComponent = place.address_components.find((c) =>
-      c.types.includes("administrative_area_level_1")
-    );
-
-    setLocationData({
-      latitude,
-      longitude,
-      address,
-      city: cityComponent?.long_name || "",
-      state: stateComponent?.long_name || "",
-    });
-  };
-
+  /** Validation */
   const validate = () => {
     const newErrors: Partial<Record<keyof FormFields, string>> = {};
 
     if (!formData.name.trim()) newErrors.name = "Name is required.";
     if (!formData.email.includes("@")) newErrors.email = "Invalid email.";
-    if (!formData.mobile.match(/^\d{10}$/))
-      newErrors.mobile = "Mobile must be 10 digits.";
-
-    const isEditMode = !!customerData?.id;
-    const hasPassword =
-      formData.password.trim().length > 0 ||
-      formData.confirm_password.trim().length > 0;
-
-    if (!isEditMode || hasPassword) {
-      if (formData.password.length < 6)
-        newErrors.password = "Password must be at least 6 characters.";
-      if (formData.password !== formData.confirm_password)
-        newErrors.confirm_password = "Passwords do not match.";
-    }
+    if (!formData.mobile.match(/^\d{10}$/)) newErrors.mobile = "Mobile must be 10 digits.";
+    if (!formData.pincode.match(/^\d{6}$/)) newErrors.pincode = "Pincode must be 6 digits.";
+    if (!formData.state.trim()) newErrors.state = "State is required.";
+    if (!formData.city.trim()) newErrors.city = "City is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  /** Submit Form */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccess(null);
@@ -157,196 +178,289 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     if (!validate()) return;
 
     setLoading(true);
-
+    const otp = localStorage.getItem("secret_otp");
     try {
-      const payload: any = {
-        ...formData,
-        type,
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-        city: locationData.city,
-        state: locationData.state,
-        address: locationData.address,
-      };
+      const formPayload = new FormData();
+      formPayload.append("type", String(type));
+      formPayload.append("name", formData.name);
+      formPayload.append("email", formData.email);
+      formPayload.append("mobile", formData.mobile);
+      formPayload.append("otp", otp ?? '');
+      formPayload.append("pincode", formData.pincode);
+      formPayload.append("address", formData.address);
+      formPayload.append("state", formData.state);
+      formPayload.append("city", formData.city);
+      formPayload.append("latitude", String(formData.latitude));
+      formPayload.append("longitude", String(formData.longitude));
 
       if (referredby && !isNaN(Number(referredby))) {
-        payload.referredby = Number(referredby);
+        formPayload.append("referredby", String(referredby));
       }
+
+      // Attach files if available
+      if (formData.aadhaar_front) formPayload.append("aadhaar_front", formData.aadhaar_front);
+      if (formData.aadhaar_back) formPayload.append("aadhaar_back", formData.aadhaar_back);
+      if (formData.pan_card) formPayload.append("pan_card", formData.pan_card);
+      if (formData.profile_photo) formPayload.append("profile_photo", formData.profile_photo);
 
       const res = await fetch(userRegister, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: formPayload,
       });
 
       const data = await res.json();
-
       if (!res.ok || data.status === false) {
         toast.error(data?.message || "Something went wrong.");
         return;
       }
 
-      toast.success("Registration successful!");
+      toast.success("Registration successful! Redirecting to dashboard.");
+        localStorage.setItem("name", data.user.name);
+        localStorage.setItem("id", data.user.id);
+        localStorage.setItem("type", data.user.type);
+        localStorage.setItem("address", data.user.address);
+        localStorage.setItem("email", data.user.email);
+        localStorage.setItem("mobile", data.user.mobile);
+        localStorage.setItem("state", data.user.state);
+        localStorage.setItem("city", data.user.city);
+        localStorage.setItem("pincode", data.user.pincode);
+        localStorage.setItem("package", JSON.stringify(data.user?.package));
 
-     
-        localStorage.setItem("name", data.data.name);
-        localStorage.setItem("id", data.data.id);
-        localStorage.setItem("type", data.data.type);
-      
-
-      if (redirection) {
-        if (data.data.type == 7) {
+        if (redirection) {
+           if (data.user.type == 7) {
+            if (data.user.password_changed == "Yes") {
           router.push("/userpanel/dashboard");
-        } else if (data.data.type == 3) {
-          router.push("/agent/dashboard");
-        }
-      } else {
-        onSuccess?.();
-        location.reload();
-      }
+            } else {
+              router.push("/userpanel/create-password");
+            }
+          }
 
-      onClose?.();
+          if (data.user.type == 3) {
+            router.push("/agent/dashboard");
+          }
+        } else {
+          onSuccess?.();
+          location.reload();
+        }
+   
+
     } catch (err) {
+      console.error(err);
       setApiError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  /** OTP Handlers */
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^\d?$/.test(value)) return;
+    const newOtp = [...otpValues];
+    newOtp[index] = value;
+    setOtpValues(newOtp);
+
+    if (value && index < otpValues.length - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+ 
+
+   
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="row">
-        {!onClose && (
-          <div className="col-md-12 form-group">
-            <h3>
-              Create {type === 3 ? "Agent" : type === 7 ? "Customer" : "User"} Account
-            </h3>
-          </div>
-        )}
+    <>
+       
+          <form onSubmit={handleSubmit}>
+         
 
-        {/* Name */}
-        <div className="col-md-12 form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          {errors.name && <small className="text-danger">{errors.name}</small>}
-        </div>
+            {!onClose && (
+              <h3>
+                Create {type === 3 ? "Agent" : type === 7 ? "Customer" : "User"} Account
+              </h3>
+            )}
 
-        {/* Email */}
-        <div className="col-md-12 form-group">
-          <label>Email</label>
-          <input
-            type="text"
-            name="email"
-            className="form-control"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {errors.email && <small className="text-danger">{errors.email}</small>}
-        </div>
+            {/* Name */}
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                className="form-control"
+                value={formData.name}
+                onChange={handleChange}
+              />
+              {errors.name && <small className="text-danger">{errors.name}</small>}
+            </div>
 
-        {/* Mobile */}
-        <div className="col-md-12 form-group">
-          <label>Mobile</label>
-          <input
-            type="text"
-            name="mobile"
-            className="form-control"
-            value={formData.mobile}
-            onChange={handleChange}
-          />
-          {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
-        </div>
+           <div className="row">
+            <div className="form-group col-md-6">
+              <label>Email</label>
+              <input
+                type="text"
+                name="email"
+                className="form-control"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              {errors.email && <small className="text-danger">{errors.email}</small>}
+            </div>
 
-        {/* Google Autocomplete (only address input) */}
-        <div className="col-md-12 form-group">
-          <label>Address{referredby}</label>
-          <GoogleMapAutocomplete onPlaceSelected={handlePlaceSelected} />
-          {locationData.address && (
-            <small className="form-text text-muted">{locationData.address}</small>
-          )}
-        </div>
+            {/* Mobile */}
+            <div className="form-group col-md-6">
+              <label>Mobile</label>
+              <input
+                type="text"
+                name="mobile"
+                className="form-control"
+                value={formData.mobile}
+                onChange={handleChange}
+                maxLength={10}
+              />
+              {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
+            </div>
+</div>
+            {/* Address */}
+            <div className="form-group">
+              <label>Address</label>
+              <input
+                name="address"
+                className="form-control"
+                value={formData.address}
+                onChange={handleChange}
+              />
+            </div>
 
-        {/* City */}
-        <div className="col-md-6 form-group">
-          <label>City</label>
-          <input
-            type="text"
-            name="city"
-            className="form-control"
-            value={locationData.city}
-            readOnly
-          />
-        </div>
+            {/* Pincode & City */}
+            <div className="row">
+              <div className="col-md-4 form-group">
+                <label>Pincode</label>
+                <input
+                  type="text"
+                  name="pincode"
+                  className="form-control"
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  maxLength={6}
+                />
+                {errors.pincode && <small className="text-danger">{errors.pincode}</small>}
+              </div>
+              <div className="col-md- form-group">
+                <label>City</label>
+                <input
+                  type="text"
+                  name="city"
+                  className="form-control"
+                  value={formData.city}
+                   onChange={handleChange}
+                   
+                />
+              </div>
+              <div className="form-group col-md-4">
+              <label>State</label>
+              <input
+                type="text"
+                name="state"
+                className="form-control"
+                value={formData.state}
+                 onChange={handleChange}
+                 
+              />
+            </div>
+            </div>
 
-        {/* State */}
-        <div className="col-md-6 form-group">
-          <label>State</label>
-          <input
-            type="text"
-            name="state"
-            className="form-control"
-            value={locationData.state}
-            readOnly
-          />
-        </div>
+            {/* State */}
+            
 
-        {/* Password */}
-        <div className="col-md-12 form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            className="form-control"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {errors.password && <small className="text-danger">{errors.password}</small>}
-        </div>
+           <div className="row">
+            <div className="form-group col-md-6">
+              <label>Aadhaar Front Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="form-control"
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    aadhaar_front: e.target.files?.[0] || null,
+                  }))
+                }
+              />
+            </div>
 
-        {/* Confirm Password */}
-        <div className="col-md-12 form-group">
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            name="confirm_password"
-            className="form-control"
-            value={formData.confirm_password}
-            onChange={handleChange}
-          />
-          {errors.confirm_password && (
-            <small className="text-danger">{errors.confirm_password}</small>
-          )}
-        </div>
+            {/* Aadhaar Back */}
+            <div className="form-group col-md-6">
+              <label>Aadhaar Back Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="form-control"
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    aadhaar_back: e.target.files?.[0] || null,
+                  }))
+                }
+              />
+            </div>
 
-        {apiError && (
-          <div className="col-md-12 form-group text-danger">{apiError}</div>
-        )}
-        {success && (
-          <div className="col-md-12 form-group text-success">{success}</div>
-        )}
+            {/* PAN Card */}
+            <div className="form-group col-md-6">
+              <label>PAN Card Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="form-control"
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    pan_card: e.target.files?.[0] || null,
+                  }))
+                }
+              />
+            </div>
 
-        <div className="col-md-12 form-group">
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? "Creating Account..." : "Create Account"}
-          </button>
-          {onClose && (
-            <button
-              type="button"
-              className="btn btn-secondary ml-5"
-              onClick={onClose}
-            >
-              Close
-            </button>
-          )}
-        </div>
-      </div>
-    </form>
+            {/* Profile Photo */}
+            <div className="form-group col-md-6">
+              <label>Profile Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="form-control"
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    profile_photo: e.target.files?.[0] || null,
+                  }))
+                }
+              />
+            </div>
+ </div>
+            {/* API Messages */}
+            {apiError && <div className="text-danger">{apiError}</div>}
+            {success && <div className="text-success">{success}</div>}
+
+            <div className="text-center d-flex flex-column align-items-center gap-2">
+              <button type="submit" className="btn btn-primary w-50 border border-white" disabled={loading}>
+                {loading ? "Creating Account..." : "Create Account"}
+              </button>
+              <Link href="/user/login" className="btn btn-danger w-50 border border-white mt-1">
+                Have account? Login
+              </Link>
+              {onClose && (
+                <button type="button" className="btn btn-secondary ml-2" onClick={onClose}>
+                  Close
+                </button>
+              )}
+            </div>
+          </form>
+        </>
+    
   );
 };
 

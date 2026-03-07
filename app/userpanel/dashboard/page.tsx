@@ -99,6 +99,33 @@ export default function Dashboard() {
     }
   };
 
+
+    const handleDoctorsAppointment = () => {
+    const pkg = localStorage.getItem("packageName");
+    if (!pkg || pkg === "null" || pkg === "undefined") {
+      Swal.fire({
+        icon: "error",
+        title: "No Active Package",
+        text: "You must purchase a package before booking a Lab test.",
+      });
+    } else {
+      router.push("/userpanel/doctors");
+    }
+  };
+
+
+      const handleMedicine = () => {
+    const pkg = localStorage.getItem("packageName");
+    if (!pkg || pkg === "null" || pkg === "undefined") {
+      Swal.fire({
+        icon: "error",
+        title: "No Active Package",
+        text: "You must purchase a package before booking a Lab test.",
+      });
+    } else {
+      router.push("/userpanel/medicine");
+    }
+  };
   return (
     <>
       <Header />
@@ -137,34 +164,28 @@ export default function Dashboard() {
 
                   {/* Doctor Appointment */}
                   <div className="col-md-4 mb-4">
-                    <a
-                      href="/userpanel/doctors"
-                      className="text-decoration-none text-dark"
-                    >
-                      <div
+                     
+                      <div  onClick={handleDoctorsAppointment}  
                         className="border rounded p-4 text-center shadow-sm h-100"
-                        style={{ backgroundColor: "#e8f5e9" }}
+                        style={{ backgroundColor: "#e8f5e9", cursor: "pointer" }}
                       >
                         <FaUserMd size={40} className="mb-3 text-black" />
                         <h5>Doctor Appointment</h5>
                       </div>
-                    </a>
+                    
                   </div>
 
                   {/* Medicines */}
                   <div className="col-md-4 mb-4">
-                    <a
-                      href="/userpanel/medicine"
-                      className="text-decoration-none text-dark"
-                    >
-                      <div
+                     
+                      <div  onClick={handleMedicine}
                         className="border rounded p-4 text-center shadow-sm h-100"
-                        style={{ backgroundColor: "#fff9c4" }}
+                        style={{ backgroundColor: "#fff9c4", cursor: "pointer" }}
                       >
                         <FaPills size={40} className="mb-3 text-black" />
                         <h5>Medicines</h5>
                       </div>
-                    </a>
+                    
                   </div>
                 </div>
               </div>

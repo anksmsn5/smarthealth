@@ -123,7 +123,7 @@ const PurchaseTable = () => {
         let className = 'badge bg-success text-white';
 
         switch (row.status) {
-          case 'Booked':
+          case 'Uploaded':
             className = 'badge bg-danger text-white';
             break;
           case 'Approved':
@@ -132,10 +132,10 @@ const PurchaseTable = () => {
           case 'Cancelled':
             className = 'badge bg-danger text-white';
             break;
-          case 'Re-Scheduled':
+          case 'Dispatched':
             className = 'badge bg-warning text-dark';
             break;
-          case 'Prescribed':
+          case 'Delivered':
             className = 'badge bg-success text-white';
             break;
         }
@@ -147,7 +147,15 @@ const PurchaseTable = () => {
               <a href={`${baseUrl}${row.file_path}`} target="_blank" className="badge bg-warning text-white ml-1">
               <FaDownload/>
               </a>
-       
+       {row.status === 'Dispatched' && row.invoice_path && (
+        <a
+          href={`${row.invoice_path}`}
+          target="_blank"
+          className="badge bg-secondary text-white ml-1"
+        >
+          <FaDownload /> Invoice
+        </a>
+      )}
           </div>
         );
       },

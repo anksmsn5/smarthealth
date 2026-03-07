@@ -27,7 +27,7 @@ export default function Home() {
 				<div className="col-lg-4 col-md-6">
 					<div className="single-feature">
 						<a href="#" className="title">
-							<img src="/care.gif" height={80}/>
+							<img src="/img/care.png" height={80}/>
 							<h3>Better Care</h3>
 						</a>
 						 
@@ -36,7 +36,7 @@ export default function Home() {
 				<div className="col-lg-4 col-md-6">
 					<div className="single-feature">
 						<a href="#" className="title">
-							<img src="/price.gif" height={80}/>
+							<img src="/img/tracking.png" height={80}/>
 							<h3>Lowest Price</h3>
 						</a>
 						 
@@ -45,7 +45,7 @@ export default function Home() {
 				<div className="col-lg-4 col-md-6">
 					<div className="single-feature">
 						<a href="#" className="title">
-							<img src="/health.gif" height={80}/>
+							<img src="/img/assured_health.png" height={80}/>
 							<h3>Assured Health</h3>
 						</a>
 						 
@@ -56,7 +56,7 @@ export default function Home() {
 		</div>
 	</section>
   <About/>
-  <div className="bg-primary text-white py-4 w-100">
+  {/* <div className="bg-primary text-white py-4 w-100">
   <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center">
     <div className="text-center text-md-start mb-3 mb-md-0">
       <h2 className="fw-bold mb-1 text-white" style={{ fontSize: "1.8rem", fontStyle: "italic" }}>
@@ -69,11 +69,11 @@ export default function Home() {
       </p>
     </div>
   </div>
-</div>
+</div> */}
 
 
   <Associates/>
-  <Packages/>
+  
   <Testimonials/>
   <Footer/>
     </>

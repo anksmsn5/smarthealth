@@ -297,8 +297,8 @@ export default function Packages({
     }
 
     const amount = selectedPackage.amount;
-    const tax = amount * 0.18; // 18% tax
-    const finalAmount = amount + tax;
+     
+    const finalAmount = amount;
     try {
       // Step 1: Call PHP backend to create Razorpay order
       const orderRes = await fetch(createOrder, {
@@ -313,7 +313,7 @@ export default function Packages({
       });
 
       const order = await orderRes.json();
-      console.log(order);
+      console.log(order.amount);
       if (!order.order_id) {
         toast.error("Failed to create Razorpay order");
         return;
@@ -343,6 +343,7 @@ export default function Packages({
               customer_id,
               agent_id,
               purchasing_from,
+              amount:finalAmount
             }),
           });
 
@@ -477,7 +478,7 @@ export default function Packages({
         ) : (
           <div className="row">
             {packages.map((pkg) => (
-              <div className="col-lg-6 col-md-6 mt-5 d-flex" key={pkg.id}>
+              <div className="col-lg-6 col-md-6 mt-1 d-flex" key={pkg.id}>
                 <div className="single-price w-100 d-flex flex-column p-3">
                   <div className="card-header gradient-border-box bg-primary p-4 text-white text-center">
                     <h4 className="text-white uppercase-text">

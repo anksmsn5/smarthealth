@@ -242,7 +242,7 @@ export default function Medicine() {
                         </label>
                         <select
                           className="form-control"
-                          value={selectedMemberId}
+                           value={formData.selectedMemberId}
                           onChange={handleMemberSelect}
                         >
                           <option value="">-- Select Member --</option>

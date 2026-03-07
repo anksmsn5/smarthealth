@@ -84,6 +84,9 @@ export default function UserMenu() {
                   >
                    <li><a className="dropdown-item" href="/userpanel/dashboard">Dashboard</a></li>
                     <li><a className="dropdown-item" href="/userpanel/orders">My Orders</a></li>
+                     <li><a className="dropdown-item" href="/userpanel/appointments">My Appointments</a></li>
+                     <li><a className="dropdown-item" href="/userpanel/test-orders">My Lab Test Orders</a></li>
+                      <li><a className="dropdown-item" href="/userpanel/prescriptions">My Medicine Orders</a></li>
                     <li><a className="dropdown-item" href="#">My Profile</a></li>
                     <li><a className="dropdown-item" href="/userpanel/change-password">Change Password</a></li>
                     <li><a className="dropdown-item" href="#" onClick={handleLogout}>Logout</a></li>

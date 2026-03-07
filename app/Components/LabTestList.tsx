@@ -148,6 +148,7 @@ export default function LabTestList() {
     const mobile = localStorage.getItem("mobile");
     const email = localStorage.getItem("email");
     const address = localStorage.getItem("address");
+    const pincode = localStorage.getItem("pincode");
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       const value = localStorage.getItem(key || "");
@@ -156,6 +157,7 @@ export default function LabTestList() {
     setAddress(address || "");
     setEmail(email || "");
     setMobile(mobile || "");
+    setPincode(pincode || "");
     const member = familyMembers.find((m) => String(m.id) === selectedId);
     console.log("Selected member:", member);
 
@@ -261,7 +263,7 @@ export default function LabTestList() {
         : 0;
     const newTestTotal = parseFloat(test.total as any);
     const updatedTotalCost = baseAmount + newTestTotal + collectionCharge;
-
+console.log(updatedTotalCost);
     const availableCredits = parseFloat(labtestvalue || "0");
 
     if (updatedTotalCost > availableCredits) {

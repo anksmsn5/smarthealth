@@ -1,15 +1,18 @@
 // export const baseUrl='https://shreevasudev.in/smartApi/';
 // export const logoUrl='https://smarthealthbackend.shreevasudev.in/uploads/logos/';
 
-export const baseUrl='https://api.smart-health.co.in/';
-export const logoUrl='https://backend.smart-health.co.in/uploads/logos/';
+export const baseUrl='https://smart-health.co.in/api/';
+export const logoUrl='https://smart-health.co.in/backend/uploads/logos/';
 
-export const reportUrl='https://backend.smart-health.co.in/';
+export const reportUrl='https://smart-health.co.in/backend/';
 export const settingsApi=baseUrl+"settings.php"
+export const generateOtp=baseUrl+"generate_otp.php"
+export const verifyOtp=baseUrl+"verify_otp.php"
 export const userRegister=baseUrl+"userregister.php"
 export const userLogin=baseUrl+"customerlogin.php"
 export const packagesApi=baseUrl+"packages.php"
 export const purchaseApi=baseUrl+"purchase.php"
+export const userSignup=baseUrl+"userSignup.php"
 export const userOrders=baseUrl+"userorders.php"
 export const userDashboard=baseUrl+"userdashboard.php"
 export const changePassword=baseUrl+"changepassword.php"

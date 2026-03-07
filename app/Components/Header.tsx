@@ -22,7 +22,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { settingsApi, logoUrl } from "@/lib/constants";
+import { settingsApi, logoUrl, packagesApi } from "@/lib/constants";
 import AgentMenu from "./AgentMenu";
 import UserMenu from "./UserMenu";
 import SubMenu from "./SubMenu";
@@ -36,7 +36,11 @@ interface AppSettings {
   address: string;
   logo: string;
 }
-
+interface Package {
+  id: number;
+  package_name: string;
+  slug: string;
+}
 const SETTINGS_KEY = "app_settings";
 
 export default function Header() {
@@ -53,7 +57,23 @@ export default function Header() {
     setIsDropdownOpen(false);
     router.push("/user/login");
   };
+const [packages, setPackages] = useState<Package[]>([]);
+ const [open, setOpen] = useState(false);
 
+  // Fetch Packages
+  useEffect(() => {
+    async function fetchPackages() {
+      try {
+        const res = await fetch(packagesApi);
+        const data = await res.json();
+        setPackages(data.data);
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      }
+    }
+
+    fetchPackages();
+  }, []);
   useEffect(() => {
     const localData = localStorage.getItem(SETTINGS_KEY);
     const token = localStorage.getItem("name");
@@ -110,37 +130,7 @@ export default function Header() {
 
   return (
     <header id="header">
-      {/* Top Info Bar */}
-      {/* <div className="bg-light py-2 border-bottom">
-  <div className="container">
-    <div className="row text-center text-md-start">
-
-    
-      <div className="col-md-2 d-flex align-items-center justify-content-center justify-content-md-start mb-2 mb-md-0">
-        <FaPhoneAlt className="me-2 text-primary" />
-        <a href={`tel:${settings?.mobile}`} className="text-dark text-decoration-none ms-2">
-          &nbsp;{settings?.mobile}
-        </a>
-      </div>
-
- 
-      <div className="col-md-7 d-none d-md-flex align-items-center justify-content-center mb-2 mb-md-0">
-        <FaMapMarkerAlt className="me-2 text-danger" />
-        <span className="ms-2">&nbsp;{settings?.address}</span>
-      </div>
-
-      
-      <div className="col-md-3 d-none d-md-flex align-items-center justify-content-center justify-content-md-end">
-        <FaEnvelope className="me-2 text-success" />
-        <a href={`mailto:${settings?.email}`} className="text-dark text-decoration-none ms-2">
-          &nbsp;{settings?.email}
-        </a>
-      </div>
-
-    </div>
-  </div>
-</div> */}
-
+     
       {/* Main Navigation */}
       <div className="container main-menu">
         <div className="row align-items-center justify-content-between d-flex">
@@ -173,7 +163,7 @@ export default function Header() {
                   <CommonMenu />
 
                   <li>
-                    <Link href="/search"><FaSearch/> Search Providers</Link>
+                    <Link href="/search">Search Providers</Link>
                   </li>
                 </>
               )}
@@ -212,22 +202,45 @@ export default function Header() {
           <ul className="list-unstyled sidemenu">
               <li>
                 <a href="/" className="d-block py-2">
-                 <FaHome/> Home
+                  Home
                 </a>
               </li>
               <li>
+   <button
+  className="d-block py-2 w-100 text-left bg-transparent border-0 shadow-none"
+  style={{ outline: "none" }}
+  onClick={() => setOpen(!open)}
+>
+  Packages
+</button>
+
+        {open && (
+          <ul className="list-unstyled ps-3">
+            {packages.length > 0 ? (
+              packages.map((pkg) => (
+            <li key={pkg.id} style={{ padding: "8px 0" }}>
+             <Link href={`/packages/${pkg.slug}`} style={{fontSize:'11px'}}>{pkg.package_name}</Link>
+            </li>
+             ))
+            ) : (
+              <li>Loading...</li>
+            )}
+          </ul>
+        )}
+      </li>
+              <li>
                 <Link href="/user/login" className="d-block py-2">
-               <FaUser/> User Login
+                User Login
                 </Link>
               </li>
 
               <li>
                 <Link href="/agent/login" className="d-block py-2">
-                <FaHandshakeSlash/> Partner Login </Link>
+                 Partner Login </Link>
               </li>
               <li>
                 <a href="/doctor/login" className="d-block py-2">
-                <FaUserMd/> Doctor Login
+                  Doctor Login
                 </a>
               </li>
  
@@ -248,29 +261,29 @@ export default function Header() {
             <ul className="list-unstyled sidemenu">
               <li>
                 <a href="/" className="d-block py-2">
-                 <FaHome/> Home
+                  Home
                 </a>
               </li>
               <li>
                 <Link href="/aboutus" className="d-block py-2">
-                <FaInfoCircle/>  About
+               About
                 </Link>
               </li>
 
               <li>
                 <Link href="/userpanel/dashboard" className="d-block py-2">
-               <FaTachometerAlt/>  Dashboard
+             Dashboard
                 </Link>
               </li>
               <li>
                 <a href="/userpanel/orders" className="d-block py-2">
-                <FaFirstOrder/>  My Orders
+                My Orders
                 </a>
               </li>
 
               <li>
                 <a href="/userpanel/change-password" className="d-block py-2">
-                 <FaKey/> Change Password
+                Change Password
                 </a>
               </li>
               <li>
